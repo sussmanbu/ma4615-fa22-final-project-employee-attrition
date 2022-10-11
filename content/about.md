@@ -16,6 +16,10 @@ The members of this team are below.
 Minghao is a master student major in Stats.
 https://github.com/minghaosun99
 
+## Marielle Belomme
+Marielle is a bachelor's student majoring in Stats and CompSci.
+https://github.com/mbelomme
+
 
 <!-- Please leave in the information below -->
 
