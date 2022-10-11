@@ -11,13 +11,11 @@ This comes from the file `content/about.md`.
 This is a website for the final project for MA[46]15 Data Science with R by Team TEAMNAME.
 The members of this team are below.
 
-## Luis Iberico
+## Minghao Sun
 
-Luis is a Ph.D. student in Stats and is the Teaching Fellow for the course.
+Minghao is a master student major in Stats.
+https://github.com/minghaosun99
 
-## Dan Sussman
-
-Dan is a professor in the Math/Stat department and is the instructor for the course.
 
 <!-- Please leave in the information below -->
 
