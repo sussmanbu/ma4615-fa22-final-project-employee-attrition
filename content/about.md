@@ -20,6 +20,11 @@ https://github.com/minghaosun99
 Marielle is a bachelor's student majoring in Stats and CompSci.
 https://github.com/mbelomme
 
+## Yuchen Wen
+
+Yuchen is a master student major in Stats.
+https://github.com/ycwen616
+
 
 <!-- Please leave in the information below -->
 
