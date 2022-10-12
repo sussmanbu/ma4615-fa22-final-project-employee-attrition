@@ -25,8 +25,13 @@ https://github.com/mbelomme
 Yuchen is a master student major in Stats.
 https://github.com/ycwen616
 
+## Yiling Qian
+
+Yiling Qian is a bachelor's students majoring in Econ and Math.
+https://github.com/yiling-qian
 
 <!-- Please leave in the information below -->
+
 
 ### Info About this Template.
 
