@@ -1,5 +1,5 @@
-baseURL: https://ma415final.netlify.app/
-title: MA 415 Project
+baseURL: https://app.netlify.com/sites/employeeattrition/overview
+title: Employee Attrition.
 
 # Comment when installing using Hugo Modules
 theme: eureka
@@ -112,4 +112,4 @@ params:
       url:
 
 ignoreFiles: 
-  ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\\.md$"]
+  ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\\.md$"].
