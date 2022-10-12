@@ -1,4 +1,4 @@
-baseURL: https://app.netlify.com/sites/employeeattrition/overview
+baseURL: https://employeeattrition.netlify.app
 title: Employee Attrition.
 
 # Comment when installing using Hugo Modules
