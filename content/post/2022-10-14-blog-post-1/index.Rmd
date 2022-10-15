@@ -27,3 +27,10 @@ https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset
 
 The data set uses to uncover the factors that lead to employee attrition and explore essential questions such as 'show me a breakdown of distance from home by job role and attrition' or 'compare average monthly income by education and attrition.'
 Employee behaviors are determined by education, environment satisfaction, job involvement, performance rating, relationship satisfaction, and work-life balance. Thirty-five columns are the factors that may cause attrition. And there are 1470 rows which is the number of employees. IBM data scientists create the data to find the reason for attrition. I can load and clean the data because the data is fiction data. It is completed. And the dataset contains 35 columns. We need to select the most related one to build our model. 
+
+
+#HR-Employee-Attrition data
+
+https://github.com/nt27web/WebMining-Clustering/blob/master/HR-Employee-Attrition.csv
+
+The number of rows in this data set is 1471, and each row represents a person. There are 35 columns of data. Each column represents a characteristic, such as age, sex, education level. There is one column that is relevant to our topic: about leaving a job. This data was first found in other people's related articles. That article references this data. We're trying to get a sense of what percentage of people are unemployed and so on. And using specific data to find out what causes a person to lose their job. However, this data has more than 1000 samples in total, and each sample depends on the influence of each item on this sample. This workload is a little heavy, I hope we can find an easy way to finish it and conclude. In order to extract the real impact of factors.
