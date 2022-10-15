@@ -1,0 +1,29 @@
+---
+title: blog post 1
+author: Minghao Sun, Yifei Cui, Marielle Belomme, Yiling Qian, Yuchen Wen
+date: '2022-10-14'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-10-14T17:11:59-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+#Human Resources Data Set
+https://www.aihr.com/wp-content/uploads/2019/10/human-resources-data-set.zip
+
+#This is the link for the codebook of the data
+https://rpubs.com/rhuebner/HRCodebook-13
+
+The columns of the data are about different types of information about each person, like Employee Name, Marital Status, Pay Rate, terminated, Position, Employment Status, Performance Score, EmpSatisfaction, DaysLateLast30, and so on. The row is different people. The HR Data was designed by Drs. Rich Huebner and Carla Patalano to accompany a case study designed for graduate HR students studying HR metrics, measurement, and analytics. I was able to load the data and clean those N/A data. We want to find the major reason that causes employee attrition. For example does salary, gender, age, or employee satisfaction plays an important role in attrition? The challenges are there are only 300 people in this data, and we are not sure whether it's enough to make a reasonable conclusion. Also, the column is too cluttered, we have to carefully work on filtering out which columns are useful for our analysis.
+
+#IBM HR Analytics Employee Attrition & Performance
+https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset
+
+The data set uses to uncover the factors that lead to employee attrition and explore essential questions such as 'show me a breakdown of distance from home by job role and attrition' or 'compare average monthly income by education and attrition.'
+Employee behaviors are determined by education, environment satisfaction, job involvement, performance rating, relationship satisfaction, and work-life balance. Thirty-five columns are the factors that may cause attrition. And there are 1470 rows which is the number of employees. IBM data scientists create the data to find the reason for attrition. I can load and clean the data because the data is fiction data. It is completed. And the dataset contains 35 columns. We need to select the most related one to build our model. 

@@ -30,6 +30,10 @@ https://github.com/ycwen616
 Yiling Qian is a bachelor's students majoring in Econ and Math.
 https://github.com/yiling-qian
 
+## Yifei Cui
+
+Yifei Cui is a master student majoring in Stats.
+https://github.com/YifeiCui
 <!-- Please leave in the information below -->
 
 
