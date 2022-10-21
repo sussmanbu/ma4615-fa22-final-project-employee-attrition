@@ -1,0 +1,22 @@
+```{r}
+library(tidyverse)
+
+turnover_data <- read_csv(here::here("dataset", "turnover.csv"))
+
+## CLEAN the data
+turnover_data_clean <- turnover_data
+
+write_csv(turnover_data_clean, file = here::here("dataset", "turnover.csv"))
+
+save(turnover_data_clean, file = here::here("dataset/turnover.RData"))
+```
+
+```{r}
+ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point()
+
+```
+
+```{r}
+turnover_lm <- lm(data=turnover_data_clean, stag~age)
+summary(turnover_lm)
+```
