@@ -25,7 +25,7 @@ turnover_data_clean &lt;- turnover_data
 write_csv(turnover_data_clean, file = here::here(&quot;dataset&quot;, &quot;turnover.csv&quot;))
 
 save(turnover_data_clean, file = here::here(&quot;dataset/turnover.RData&quot;))</code></pre>
-<pre class="r"><code>ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point()</code></pre>
+<pre class="r"><code>ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point() + labs(x = &quot;Age&quot;, y = &quot;Level of Experience&quot;, color = &quot;Way to Work&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>turnover_lm &lt;- lm(data=turnover_data_clean, stag~age)
 summary(turnover_lm)</code></pre>
