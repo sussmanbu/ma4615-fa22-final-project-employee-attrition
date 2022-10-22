@@ -12,11 +12,13 @@ save(turnover_data_clean, file = here::here("dataset/turnover.RData"))
 ```
 
 ```{r}
-ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point()
+ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point()+labs(y="experience")
 
 ```
+From the plot we can the experience has a negative correlation with age, person with smaller age tend to have larger experience, also most of the employer take bus to work.
 
 ```{r}
 turnover_lm <- lm(data=turnover_data_clean, stag~age)
 summary(turnover_lm)
 ```
+from the test statistic we can see that age is significant in this model since the p-value is smaller than 0.05.
