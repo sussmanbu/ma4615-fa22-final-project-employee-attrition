@@ -12,7 +12,9 @@ save(turnover_data_clean, file = here::here("dataset/turnover.RData"))
 ```
 
 ```{r}
-ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point()+labs(y="experience")
+
+ggplot(turnover_data_clean, aes(x=age, y=stag, color = way)) + geom_point() + labs(x = "Age", y = "Level of Experience", color = "Way to Work")
+
 
 ```
 
