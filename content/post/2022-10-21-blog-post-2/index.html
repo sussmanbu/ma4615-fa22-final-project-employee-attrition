@@ -1,13 +1,11 @@
 
 
 
-<<<<<<< HEAD
-=======
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
 ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
 ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
@@ -49,5 +47,5 @@ summary(turnover_lm)</code></pre>
 ## Residual standard error: 33.44 on 1127 degrees of freedom
 ## Multiple R-squared:  0.03896,    Adjusted R-squared:  0.03811 
 ## F-statistic: 45.69 on 1 and 1127 DF,  p-value: 2.221e-11</code></pre>
+<p>from the test statistic we can see that age is significant in this model since the p-value is smaller than 0.05.</p>
 <p>We stumbled upon this data set when our search for statistics pertaining to employee attrition kept leading us to fictional data. Thankfully, this uses real data to find connections between the characteristics of an employee and their job and their likeliness to quit their job. In our initial exploration of the data, we decided to take a look at the relationship between the age of employees and their level of experience aka “stag” through a scatter plot. Firstly, it highlights that we lack data for employees ages 50 years old and above, which forces us to pose the question of whether we can reliably make conclusions about these age groups with such a limited amount of data. Consequently, we are discussing if we should remove points belonging to this age group when cleaning the data. Additionally, we were surprised to see that those belonging to younger age groups hold more experience in their roles than older generations. For example, only two people above the age of 40 surpassed a stag of 100, while many points can be seen representing people under the age of 40 surpassing this stag level. This is surprising considering an older person would have been alive longer, allowing for more opportunities and time to have developed greater experience. Unfortunately, we are missing some variables that could help explain this relationship such as a history of switching professions. Lastly, by coloring our points based on mode of transportation, we’ve noticed that employees tend to take vehicles such as the bus or car to work rather than walking there. This may allow us to see their preferred way of transportation or draw inferences on their distance to work site.</p>
->>>>>>> e895d33d29c41ffa21e9900a7487a8066149c0b9
