@@ -1,0 +1,15 @@
+---
+title: blog-post-4
+author: Daniel Sussman
+date: '2022-11-04'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-04T16:32:02-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
