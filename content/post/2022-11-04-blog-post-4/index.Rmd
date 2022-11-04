@@ -13,3 +13,8 @@ lastmod: '2022-11-04T16:32:02-04:00'
 featuredVideo: ~
 featuredImage: ~
 ---
+```{r }
+turnover<-turnover_data_clean
+lm<-lm(data=turnover, stag ~ age + extraversion + independ + selfcontrol + anxiety + novator)
+summary(lm)
+```
