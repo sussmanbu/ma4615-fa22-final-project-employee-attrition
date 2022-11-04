@@ -21,5 +21,5 @@ outliers<-51.3183+1.5*(39.58932)
 outliers
 lm<-lm(data=turnover_data_clean, stag ~ age + extraversion + independ + selfcontrol + anxiety + novator)
 summary(lm)
-turnover_data_clean %>% filter(stag<=110.7023) %>% ggplot(aes(y=stag,x=age,color=gender))+geom_point()+geom_abline(slope = -1.05,intercept = 81.6524,color="red")
+turnover_data_clean %>% filter(stag<=110.7023) %>% ggplot(aes(y=stag,x=age,color=gender))+geom_point()+geom_abline(slope = -1.05,intercept = 81.6524,color="red")+labs(y="experience")
 ```
