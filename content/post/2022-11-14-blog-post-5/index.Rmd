@@ -1,0 +1,33 @@
+---
+title: blog-post-5
+author: Daniel Sussman
+date: '2022-11-14'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-14T21:11:49-05:00'
+featuredVideo: ~
+featuredImage: ~
+---
+We change our new topic to discover the relationship between the temperature increase through years and the CO2 emission worldwide.
+
+https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world 
+This is the data of "Carbon Dioxide Emissions of the World( 1990-2018)"
+
+https://tradingeconomics.com/country-list/temperature
+This is where we can find the temperature change in each country during last 30 years.
+
+https://datahub.io/core/global-temp#r
+This is the data where we can find the "Global Temperature Time Series".
+
+We will mostly focus on these data as the most important data. Try to find their relationship both through countries and through the world as a whole. As we go over the data, we find that the trend of the temperature and the co2 emission is both increase through last 30 years, there seems to be a positive relationship between temp and co2 emission. As the temperature increase, we also want to connect some data about the glacier amount and the sea level, of course these two topics are highly correlated with the increase in temperature.
+
+https://datahub.io/core/sea-level-rise
+This is the data of "Global Average Absolute Sea Level Change, 1880-2014"
+
+https://datahub.io/core/glacier-mass-balance
+This is where we can analysis the "Average cumulative mass balance of reference Glaciers worldwide"
