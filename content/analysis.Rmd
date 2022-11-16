@@ -18,8 +18,15 @@ print(getwd())
 data <- read_csv(here::here("dataset/loan_refusal_clean.csv"))
 load(here::here("dataset/loan_refusal.RData"))
 print(ls())
-read.csv()
 ```
+
+```{r}
+
+
+
+
+```
+
 
 ## Note on Attribution
 

@@ -48,6 +48,17 @@ source(
 )
 ```
 
+```{r}
+CO2_clean<-CO2_emissions %>% select(Country,34:6)
+CO2_clean_1 <- data.frame(t(CO2_clean[-1]))
+colnames(CO2_clean_1)<-t(CO2_clean[,1])
+year<-c(1990:2018)
+CO2_clean_1$year<-year
+CO2_clean_1<-CO2_clean_1 %>% select(year,1:195)
+CO2_clean_1 %>% ggplot(aes(y=World,x=year))+geom_point()
+(summary(lm(World~year,data=CO2_clean_1)))
+```
+
 Note how I use the `here::here` function from the [`here` package](https://here.r-lib.org/articles/here.html) to avoid path problems.
 This function is used to specify directories within the project's root directory.
 You should never use absolute paths (eg. `/Users/danielsussman/path/to/project/` or `C:\\MA415\\Final_Project\\`) and using `here` ensures that it doesn't matter what the current working directory is as long as you have this RStudio Project open.
