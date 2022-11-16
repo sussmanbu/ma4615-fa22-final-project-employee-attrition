@@ -21,7 +21,8 @@ print(ls())
 ```
 
 ```{r}
-
+CO2_clean_1 %>% ggplot(aes(y=World,x=year))+geom_point()
+(summary(lm(World~year,data=CO2_clean_1)))
 
 
 
