@@ -24,6 +24,9 @@ print(ls())
 CO2_clean_1 %>% ggplot(aes(y=World,x=year))+geom_point()
 (summary(lm(World~year,data=CO2_clean_1)))
 
+CO2_temp %>% ggplot(aes(y=World,x=Mean))+geom_point()
+(summary(lm(World~Mean,data=CO2_temp)))
+
 
 
 ```
