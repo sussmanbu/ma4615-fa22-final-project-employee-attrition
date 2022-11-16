@@ -21,10 +21,10 @@ print(ls())
 ```
 
 ```{r}
-CO2_clean_1 %>% ggplot(aes(y=World,x=year))+geom_point()
-(summary(lm(World~year,data=CO2_clean_1)))
+CO2_clean_1 %>% ggplot(aes(y=World,x=Year))+geom_point()+labs(y="CO2 World emission")
+(summary(lm(World~Year,data=CO2_clean_1)))
 
-CO2_temp %>% ggplot(aes(y=World,x=Mean))+geom_point()
+CO2_temp %>% ggplot(aes(x=World,y=Mean))+geom_point()+labs(x="CO2 World emission",y="Global temp anormaly")
 (summary(lm(World~Mean,data=CO2_temp)))
 
 

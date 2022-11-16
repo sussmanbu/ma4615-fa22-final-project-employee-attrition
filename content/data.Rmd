@@ -50,11 +50,10 @@ source(
 
 ```{r}
 CO2_clean<-CO2_emissions %>% select(Country,34:6)
-CO2_clean_1 <- data.frame(t(CO2_clean[-1]))
-colnames(CO2_clean_1)<-t(CO2_clean[,1])
-Year<-c(1990:2018)
-CO2_clean_1$Year<-Year
-CO2_clean_1<-CO2_clean_1 %>% select(Year,1:195)
+CO2_clean$`1990`<-as.double(CO2_clean$`1990`)
+CO2_clean_1 <- CO2_clean %>% pivot_longer(cols = c("1990":"2018"),names_to = "Year",values_to = "CO2emission")
+CO2_clean_1<- CO2_clean_1 %>% group_by(Country,Year)
+
 
 global_temp<-global_temp %>% filter(Source=="GCAG") %>% select(Year,Mean)
 CO2_temp<-inner_join(CO2_clean_1,global_temp) %>% select(Year,Mean,2:196)
