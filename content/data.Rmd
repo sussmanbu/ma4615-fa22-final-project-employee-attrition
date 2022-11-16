@@ -54,9 +54,8 @@ CO2_clean$`1990`<-as.double(CO2_clean$`1990`)
 CO2_clean_1 <- CO2_clean %>% pivot_longer(cols = c("1990":"2018"),names_to = "Year",values_to = "CO2emission")
 CO2_clean_1<- CO2_clean_1 %>% group_by(Country,Year)
 
-
 global_temp<-global_temp %>% filter(Source=="GCAG") %>% select(Year,Mean)
-CO2_temp<-inner_join(CO2_clean_1,global_temp) %>% select(Year,Mean,2:196)
+CO2_temp<-inner_join(CO2_clean_1,global_temp,) %>% select(Year,Mean,2:196)
 ```
 
 Note how I use the `here::here` function from the [`here` package](https://here.r-lib.org/articles/here.html) to avoid path problems.
