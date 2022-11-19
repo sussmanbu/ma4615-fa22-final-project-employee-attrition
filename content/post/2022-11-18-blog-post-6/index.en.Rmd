@@ -18,10 +18,8 @@ featuredImage: ~
 library(tidyverse)
 library(shiny)
 
-source(
-  here::here("static", "load_and_clean_data.R"),
-  echo = FALSE # Use echo=FALSE or omit it to avoid code output  
-)
+CO2_emissions <- read_csv(here::here("dataset","historical_emissions.csv"))
+
 
 CO2_clean<-CO2_emissions %>% select(Country,34:6)
 CO2_clean$`1990`<-as.double(CO2_clean$`1990`)
