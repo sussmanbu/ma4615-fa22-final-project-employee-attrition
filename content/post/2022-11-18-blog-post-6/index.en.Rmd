@@ -65,20 +65,12 @@ server <- function(input, output) {
     # Centers titles
     theme_update(plot.title = element_text(hjust = 0.5))
     
-    # Initializes the line plot
-    table <- ggplot() + labs(x = "Year", y = "CO2 Emission", color = "Country", title = "Progression of CO2 Levels")
-    
-    
-    # Appends a line to plot for each country selected
-    for (country in input$country) {
-      line <- df %>% 
-        filter(Country == country & Year >= input$year) %>% 
-        geom_line(mapping = aes(x = Year, y = CO2emission, group = 1, colour = as.factor(Country)))
-      
-      table <- table + line
-    }
-      
-    table
+    # Plots a line for each country selected
+    df %>% 
+      filter(Country %in% input$country & Year >= input$year) %>% 
+      ggplot() + 
+      labs(x = "Year", y = "CO2 Emission", color = "Country", title = "Progression of CO2 Levels") +
+      geom_line(mapping = aes(x = Year, y = CO2emission, group = Country, colour = as.factor(Country)))
   })
 }
 
