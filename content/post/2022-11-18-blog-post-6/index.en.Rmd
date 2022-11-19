@@ -69,14 +69,20 @@ ui <- fluidPage(
 # Defines server logic
 server <- function(input, output) {
   output$scatter <- renderPlot({
-    ggplot(data = df %>% filter(Country == input$country) %>% filter(Year>=input$year)) +
-      geom_point(aes(x = Year, y = CO2emission)) #geom_line(aes(x = Year, y = CO2emission))
+    df %>% 
+      filter(Country == input$country) %>% 
+      filter(Year >= input$year) %>%
+      ggplot(aes(x = Year, y = CO2emission, group = 1)) +
+      geom_point() +
+      geom_line() +
+      labs(x = "Year", y = "CO2 Emission")
   })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
 ```
-First we want to use a geom_line instead of a geom_point, which will show the trend more clearly. However, only the geom_point works, so we label the geom_line after.
 
-Second we want to add another Sidebar panel to give a option that people may want to compare two countries CO2 emissions on the plot.
+We are working to create an interactive interface that will allow users to engage with the data we've been analyzing. As of yet, we have added a reactive graph that plots a line based on the time range and country inputted by the user. 
+
+Now we are trying to update our SidePanel to allow for the selection of multiple countries at once to compare the trends of different countries.
