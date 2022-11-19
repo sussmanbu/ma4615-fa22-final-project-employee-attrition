@@ -1,0 +1,75 @@
+---
+title: blog-post-6
+author: Daniel Sussman
+date: '2022-11-18'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-18T20:31:58-05:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+```{r}
+library(tidyverse)
+library(shiny)
+#df <- read_csv("dataset/annual_csv.RData")
+df <- CO2_clean %>% pivot_longer(cols = c("1990":"2018"), names_to = "Year",values_to = "CO2emission")
+
+# Client interface
+ui <- fluidPage(
+  # Application title
+  titlePanel("CO2 Emissions"),
+  
+  #  Sidebar panel for input
+  sidebarPanel(
+    # User inputs year to query from
+    selectInput(
+      inputId = "year",
+      label = "From which year:",
+      choices = df$Year %>% unique(),
+    ),
+    
+    # User inputs country to query from
+    #textInput(
+      #inputId = "country",
+      #label = "Choose a country:",
+      #value = "World"
+    
+    # User inputs country to query from
+    selectInput(
+      inputId = "country",
+      label = "Which country are you from:",
+      choices = df$Country%>% unique(),
+    
+      
+      
+          
+    )
+    
+  ),
+  
+  mainPanel(
+    plotOutput(outputId = "scatter")
+  )
+  
+)
+
+# Defines server logic
+server <- function(input, output) {
+  output$scatter <- renderPlot({
+    ggplot(data = df %>% filter(Country == input$country) %>% filter(Year>=input$year)) +
+      geom_point(aes(x = Year, y = CO2emission)) #geom_line(aes(x = Year, y = CO2emission))
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+```
+First we want to use a geom_line instead of a geom_point, which will show the trend more clearly. However, only the geom_point works, so we label the geom_line after.
+
+Second we want to add another Sidebar panel to give a option that people may want to compare two countries CO2 emissions on the plot.

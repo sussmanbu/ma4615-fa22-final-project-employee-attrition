@@ -44,7 +44,7 @@ Your [load_and_clean_data.R](/load_and_clean_data.R) file is how you will load a
 ```{r}
 source(
   here::here("static", "load_and_clean_data.R"),
-  echo = TRUE # Use echo=FALSE or omit it to avoid code output  
+  echo = FALSE # Use echo=FALSE or omit it to avoid code output  
 )
 ```
 
@@ -55,7 +55,9 @@ CO2_clean_1 <- CO2_clean %>% pivot_longer(cols = c("1990":"2018"),names_to = "Ye
 CO2_clean_1<- CO2_clean_1 %>% group_by(Country,Year)
 
 global_temp<-global_temp %>% filter(Source=="GCAG") %>% select(Year,Mean)
-CO2_temp<-inner_join(CO2_clean_1,global_temp,) %>% select(Year,Mean,2:196)
+global_temp$Year<-as.character(global_temp$Year)
+CO2_temp<-CO2_clean_1 %>% filter(Country=="World") %>% 
+  inner_join(global_temp)
 ```
 
 Note how I use the `here::here` function from the [`here` package](https://here.r-lib.org/articles/here.html) to avoid path problems.

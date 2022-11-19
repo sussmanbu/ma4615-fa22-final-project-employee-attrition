@@ -1,10 +1,22 @@
 library(tidyverse)
 
-loan_data <- read_csv(here::here("dataset", "loan_refusal.csv"))
+
+CO2_emissions <- read_csv(here::here("dataset", "historical_emissions.csv"))
 
 ## CLEAN the data
-loan_data_clean <- loan_data
+CO2_emissions_clean <- CO2_emissions
 
-write_csv(loan_data_clean, file = here::here("dataset", "loan_refusal_clean.csv"))
+write_csv(CO2_emissions_clean, file = here::here("dataset", "historical_emissions.csv"))
 
-save(loan_data_clean, file = here::here("dataset/loan_refusal.RData"))
+save(CO2_emissions_clean, file = here::here("dataset/CO2_emission.RData"))
+
+
+global_temp <- read.csv(here::here("dataset", "annual_csv.csv"))
+
+
+## CLEAN the data
+global_temp_clean <- global_temp
+
+write.csv(global_temp_clean, file = here::here("dataset", "annual_csv.csv"))
+
+save(global_temp_clean, file = here::here("dataset/annual_csv.RData"))

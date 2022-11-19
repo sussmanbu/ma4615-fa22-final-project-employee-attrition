@@ -1,0 +1,30 @@
+---
+title: blog-post-4
+author: Daniel Sussman
+date: '2022-11-04'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-04T16:32:02-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+
+<div id="TOC">
+
+</div>
+
+<pre class="r"><code>library(tidyverse)
+turnover_data_clean %&gt;% ggplot(aes(x=stag))+geom_boxplot()
+summary(stag)
+IQR(stag)
+outliers&lt;-51.3183+1.5*(39.58932)
+outliers
+lm&lt;-lm(data=turnover_data_clean, stag ~ age + extraversion + independ + selfcontrol + anxiety + novator)
+summary(lm)
+turnover_data_clean %&gt;% filter(stag&lt;=110.7023) %&gt;% ggplot(aes(y=stag,x=age,color=gender))+geom_point()+geom_abline(slope = -1.05,intercept = 81.6524,color=&quot;red&quot;)+labs(y=&quot;experience&quot;)</code></pre>
