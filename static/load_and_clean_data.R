@@ -8,7 +8,7 @@ write_csv(CO2_emissions_clean, file = here::here("dataset", "historical_emission
 save(CO2_emissions_clean, file = here::here("dataset/CO2_emission.RData"))
 
 annual_temperature <- read_csv(here::here("dataset", "annual_temperature.csv"))
-annual_temperature_clean <- annual_temperature
+annual_temperature_clean <- annual_temperature%>%select(Source,Year,Mean)
 write.csv(annual_temperature_clean, file = here::here("dataset", "annual_temperature.csv"))
 save(annual_temperature_clean, file = here::here("dataset/annual_temperature.RData"))
 
