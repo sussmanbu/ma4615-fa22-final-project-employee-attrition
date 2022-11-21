@@ -38,30 +38,23 @@ ui <- fluidPage(
     selectInput(
       inputId = "year",
       label = "From which year:",
-      choices = df$Year %>% unique(),
+      choices = df$Year %>% unique()
     ),
-    
-    # User inputs country to query from
-    #textInput(
-      #inputId = "country",
-      #label = "Choose a country:",
-      #value = "World"
     
     # User inputs country to query from
     selectInput(
       inputId = "country",
+      selected = "World",
       label = "Which country are you from:",
       choices = df$Country%>% unique(),
-    
-      
-      
-          
+      multiple = TRUE
     )
     
   ),
   
   mainPanel(
-    plotOutput(outputId = "scatter")
+    plotOutput(outputId = "scatter"),
+    textOutput(outputId = "test")
   )
   
 )
@@ -69,14 +62,20 @@ ui <- fluidPage(
 # Defines server logic
 server <- function(input, output) {
   output$scatter <- renderPlot({
-    ggplot(data = df %>% filter(Country == input$country) %>% filter(Year>=input$year)) +
-      geom_point(aes(x = Year, y = CO2emission)) #geom_line(aes(x = Year, y = CO2emission))
+    # Centers titles
+    theme_update(plot.title = element_text(hjust = 0.5))
+    
+    # Plots a line for each country selected
+    df %>% 
+      filter(Country %in% input$country & Year >= input$year) %>% 
+      ggplot() + 
+      labs(x = "Year", y = "CO2 Emission", color = "Country", title = "Progression of CO2 Levels") +
+      geom_line(mapping = aes(x = Year, y = CO2emission, group = Country, colour = as.factor(Country)))
   })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
 ```
-First we want to use a geom_line instead of a geom_point, which will show the trend more clearly. However, only the geom_point works, so we label the geom_line after.
 
-Second we want to add another Sidebar panel to give a option that people may want to compare two countries CO2 emissions on the plot.
+We are working to create an interactive interface that will allow users to engage with the data we've been analyzing. As of yet, we have added a reactive graph that plots a line based on the time range and country inputted by the user. Users may input multiple countries at once to compare the trends of the different countries and see each line represented in the legend.
