@@ -19,7 +19,7 @@ Global fossil fuel consumption: https://datahub.io/core/global-temp#data
 Forest area: https://data.worldbank.org/indicator/AG.LND.FRST.ZS
 
 ----
-
+we use "readxl" packages to load in the data, since two of the data are in the excel format.
 
 Variable:
 
@@ -38,6 +38,7 @@ Variable:
 *Population:
 
 ----
+
 
 world data cleanig:
 
