@@ -89,8 +89,8 @@ world_forest_area<-forest_area %>% filter(`Country Name`=="World") %>%
   select(`Country Name`,"1960":"2021") %>% 
   pivot_longer(cols = c("1960":"2021"),names_to = "Year",values_to = "forest area")
 World_data<-world_forest_area %>% inner_join(World_data)
-World_data<-World_data %>% select(- Country) 
-
+World_data<-World_data %>% select(- Country)
+colnames(World_data)[9]<-"temperature"
 
 
 ```
