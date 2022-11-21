@@ -59,7 +59,7 @@ The fossil fuel data has four parameters in it, year, consumption by gas, consum
 
 ```{r}
 source(
-  here::here("static", "load_and_clean_data.R"),
+  here::here("static", "load_and_clean_data.R"), 
   echo = FALSE # Use echo=FALSE or omit it to avoid code output  
 )
 ```
