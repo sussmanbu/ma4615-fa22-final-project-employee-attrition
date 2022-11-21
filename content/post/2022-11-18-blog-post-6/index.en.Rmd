@@ -45,7 +45,7 @@ ui <- fluidPage(
     selectInput(
       inputId = "country",
       selected = "World",
-      label = "Which country are you from:",
+      label = "Which country are you are interested:",
       choices = df$Country%>% unique(),
       multiple = TRUE
     )
@@ -79,3 +79,4 @@ shinyApp(ui = ui, server = server)
 ```
 
 We are working to create an interactive interface that will allow users to engage with the data we've been analyzing. As of yet, we have added a reactive graph that plots a line based on the time range and country inputted by the user. Users may input multiple countries at once to compare the trends of the different countries and see each line represented in the legend.
+
