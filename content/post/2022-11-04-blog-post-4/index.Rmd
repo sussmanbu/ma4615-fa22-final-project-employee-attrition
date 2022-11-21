@@ -13,7 +13,10 @@ lastmod: '2022-11-04T16:32:02-04:00'
 featuredVideo: ~
 featuredImage: ~
 ---
-```{r }
+
+
+```{r, eval=FALSE}
+library(tidyverse)
 turnover_data_clean %>% ggplot(aes(x=stag))+geom_boxplot()
 summary(stag)
 IQR(stag)

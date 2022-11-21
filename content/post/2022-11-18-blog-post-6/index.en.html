@@ -1,0 +1,63 @@
+---
+title: blog-post-6
+author: Daniel Sussman
+date: '2022-11-18'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-18T20:31:58-05:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+
+<div id="TOC">
+
+</div>
+
+<p>library(tidyverse)
+library(shiny)
+#df &lt;- read_csv(“dataset/annual_csv.RData”)
+df &lt;- CO2_clean %&gt;% pivot_longer(cols = c(“1990”:“2018”), names_to = “Year”,values_to = “CO2emission”)</p>
+<div id="client-interface" class="section level1">
+<h1>Client interface</h1>
+<p>ui &lt;- fluidPage(
+# Application title
+titlePanel(“CO2 Emissions”),</p>
+<p># Sidebar panel for input
+sidebarPanel(
+# User inputs year to query from
+selectInput(
+inputId = “year”,
+label = “Choose a year:”,
+choices = df$Year %&gt;% unique(),
+),</p>
+<pre><code># User inputs country to query from
+textInput(
+  inputId = &quot;country&quot;,
+  label = &quot;Choose a country:&quot;,
+  value = &quot;World&quot;
+)</code></pre>
+<p>),</p>
+<p>mainPanel(
+plotOutput(outputId = “scatter”)
+)</p>
+<p>)</p>
+</div>
+<div id="defines-server-logic" class="section level1">
+<h1>Defines server logic</h1>
+<p>server &lt;- function(input, output) {
+output<span class="math inline">\(scatter &lt;- renderPlot({  ggplot(data = df %&gt;% filter(Country == input\)</span>country)) +
+geom_point(aes(x = Year, y = CO2emission)) +
+geom_line(aes(x = Year, y = CO2emission))
+})
+}</p>
+</div>
+<div id="run-the-application" class="section level1">
+<h1>Run the application</h1>
+<p>shinyApp(ui = ui, server = server)</p>
+</div>

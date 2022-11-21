@@ -7,56 +7,81 @@ featuredImage: images/data-import-cheatsheet-thumbs.png
 draft: false
 ---
 
+As greenhouse gas emissions blanket the Earth, they trap the sun’s heat. This leads to global warming and climate change. The world is now warming faster than at any point in recorded history. Warmer temperatures over time are changing weather patterns and disrupting the usual balance of nature. This poses many risks to human beings and all other forms of life on Earth. Our group is interested in find the relationship between the increase of global temperature and the main factors affecting it. 
+
+----
+
+##Data Link:
+
+world Temperature: https://datahub.io/core/global-temp#data
+world CO2 emission: https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world
+Global fossil fuel consumption: https://datahub.io/core/global-temp#data  
+Forest area: https://data.worldbank.org/indicator/AG.LND.FRST.ZS
+
+----
 
 
-This comes from the file `content/data.Rmd`.
+Variable:
 
-Your first steps in this project will be to find data to work on.
+*Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two datasets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available timeseries of global-scale temperature anomalies are calculated with respect to the 20th century average.
 
-I recommend trying to find data that interests you and that you are knowledgeable about. A bad example would be if you have no interest in video games but your data set is about video games. I also recommend finding data that is related to current events, social justice, and other areas that have an impact.
+*CO2 emission:Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the unit is MtCO₂e
 
-You are __not__ allowed to work on COVID data.
+*Gas:Global primary energy consumption by gas, measured in terawatt-hours (TWh).
 
-Initially, you will study _one dataset_ but later you will need to combine that data with another dataset. For this reason, I recommend finding data that has some date and/or location components. These types of data are conducive to interesting visualizations and analysis and you can also combine this data with other data that also has a date or location variable.
-Data from the census, weather data, economic data, are all relatively easy to combine with other data with time/location components.
+*Oil:Global primary energy consumption by oil, measured in terawatt-hours (TWh).
 
+*Coal:Global primary energy consumption by coal, measured in terawatt-hours (TWh).
 
-## Where to keep data?
+*Forest_area:
 
+*Population:
 
-Below 50mb: In `dataset` folder
+----
 
-Above 50mb: In `dataset_ignore` folder. This folder will be ignored by `git` so you'll have to manually sync these files across your team.
+world data cleanig:
 
-### Sharing your data
+CO2 emission:
 
+In this data, the data collected Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the years are present in the column from 2016 to 1990, we first use arrange to make the year in the right order from 1990 to 2016, then we find that data under is 1990 is not numerical, we as_double to make it right. Since year in most data are in each row instead of column, we use a pivot_longer to change it. We also group by country and year.
 
-For small datasets (<50mb), you can use the `dataset` folder that is tracked by github. Add the files just like you would any other file.
+global temperature:
 
-**Do not** use a folder named `data`.
-This folder is reserved by `hugo`.
-If you create a folder named `data` this will cause problems.
+This data is measured in two Source, one is from the GISS Surface Temperature (GISTEMP), and the other is from the global component of Climate at a Glance (GCAG). Since the GCAG data has more decimal and is more accurate, we decided to use source from GCAG and use filter to remove other data. we only need the world data, so we use filter to only have world data for later analysis. Since the global temperature data is also measured from 1880 to 2016, we use a inner_join to join this data into the previous one.
 
-For larger datasets, you'll need to create a new folder in the project root directory named `dataset-ignore`. This will be ignored by git (based off the `.gitignore` file in the project root directory) which will help you avoid issues with Github's size limits. Your team will have to manually make sure the data files in `dataset-ignore` are synced across team members.
+fossil fuel:
 
-Your [load_and_clean_data.R](/load_and_clean_data.R) file is how you will load and clean your data. Here is a an example of a very simple one.
+The fossil fuel data has four parameters in it, year, consumption by gas, consumption by oil, and consumption by coal. These three parameters are collected together in this data since coal, oil, or gas are the major fossil fuel, and burning these fossil fuel will produce greenhouse gas together. We change the name for the last three parameter into "gas","Oil", and "Coal", which will be more clear than the original name. Also this data is collected from 1800 to 2021, the time period is much longer than our main data, we use inner_join again to combine these three fossil fuel data into a more complete data, which will be easier to use for later analysis.
+
+----
+
 
 ```{r}
 source(
   here::here("static", "load_and_clean_data.R"),
-  echo = TRUE # Use echo=FALSE or omit it to avoid code output  
+  echo = FALSE # Use echo=FALSE or omit it to avoid code output  
 )
 ```
-
 ```{r}
 CO2_clean<-CO2_emissions %>% select(Country,34:6)
 CO2_clean$`1990`<-as.double(CO2_clean$`1990`)
 CO2_clean_1 <- CO2_clean %>% pivot_longer(cols = c("1990":"2018"),names_to = "Year",values_to = "CO2emission")
 CO2_clean_1<- CO2_clean_1 %>% group_by(Country,Year)
 
-global_temp<-global_temp %>% filter(Source=="GCAG") %>% select(Year,Mean)
-CO2_temp<-inner_join(CO2_clean_1, global_temp,) %>% select(Year, Mean, 2:196)
+global_temp<-annual_temperature %>% filter(Source=="GCAG") %>% select(Year,Mean)
+global_temp$Year<-as.character(global_temp$Year)
+World_data<-CO2_clean_1 %>% filter(Country=="World") %>% 
+  inner_join(global_temp)
+
+colnames(fossil_fuel)[which(names(fossil_fuel)=="Gas..TWh..direct.energy.")]<- "Gas"
+colnames(fossil_fuel)[which(names(fossil_fuel)=="Oil..TWh..direct.energy.")]<- "Oil"
+colnames(fossil_fuel)[which(names(fossil_fuel)=="Coal..TWh..direct.energy.")]<- "Coal"
+fossil_fuel<-fossil_fuel %>% select(Year:Coal)
+fossil_fuel$Year<-as.character(fossil_fuel$Year)
+World_data<-fossil_fuel %>% inner_join(World_data)
+
 ```
+----
 
 Note how I use the `here::here` function from the [`here` package](https://here.r-lib.org/articles/here.html) to avoid path problems.
 This function is used to specify directories within the project's root directory.
