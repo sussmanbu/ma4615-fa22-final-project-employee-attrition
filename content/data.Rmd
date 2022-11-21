@@ -62,7 +62,8 @@ source(
   echo = FALSE # Use echo=FALSE or omit it to avoid code output  
 )
 ```
-```{r}
+
+```{r eval=FALSE} 
 CO2_clean<-CO2_emissions %>% select(Country,34:6)
 CO2_clean$`1990`<-as.double(CO2_clean$`1990`)
 CO2_clean_1 <- CO2_clean %>% pivot_longer(cols = c("1990":"2018"),names_to = "Year",values_to = "CO2emission")
@@ -80,12 +81,20 @@ fossil_fuel<-fossil_fuel %>% select(Year:Coal)
 fossil_fuel$Year<-as.character(fossil_fuel$Year)
 World_data<-fossil_fuel %>% inner_join(World_data)
 
+world_pop<-population %>% filter(`Country Name`=="World") %>% select(`Country Name`,"1960":"2021") %>% 
+  pivot_longer(cols = c("1960":"2021"),names_to = "Year",values_to = "population")
+World_data<-world_pop %>% inner_join(World_data)
 
-
+world_forest_area<-forest_area %>% filter(`Country Name`=="World") %>% 
+  select(`Country Name`,"1960":"2021") %>% 
+  pivot_longer(cols = c("1960":"2021"),names_to = "Year",values_to = "forest area")
+World_data<-world_forest_area %>% inner_join(World_data)
+World_data<-World_data %>% select(- Country) 
 
 
 
 ```
+
 ----
 
 Note how I use the `here::here` function from the [`here` package](https://here.r-lib.org/articles/here.html) to avoid path problems.
