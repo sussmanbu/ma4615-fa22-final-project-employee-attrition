@@ -7,7 +7,6 @@ featuredImage: images/data-import-cheatsheet-thumbs.png
 draft: false
 ---
 
-
 As greenhouse gas emissions blanket the Earth, they trap the sun’s heat. This leads to global warming and climate change. The world is now warming faster than at any point in recorded history. Warmer temperatures over time are changing weather patterns and disrupting the usual balance of nature. This poses many risks to human beings and all other forms of life on Earth. Our group is interested in find the relationship between the increase of global temperature and the main factors affecting it. 
 
 ----
