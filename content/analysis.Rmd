@@ -18,7 +18,7 @@ library(GGally)
 library(patchwork)
 library(tmap)
 library(sf)
-library(tmaptools)
+
 print(getwd())
 data <- read_csv(here::here("dataset/loan_refusal_clean.csv"))
 load(here::here("dataset/loan_refusal.RData"))
@@ -78,6 +78,13 @@ total_change <- function(x, y){
 }
 
 total_change(1961,2021) #between any two years
+
+TempChange_Ave <- TemChange_Cont %>% as_tibble() %>% select('Y1961':'Y2021') %>%
+  colSums(na.rm = TRUE)/223
+TempChange_Ave <- tibble(year = c(1961:2021), TempChange_Ave) 
+TempChange_Ave %>% ggplot(aes(year, TempChange_Ave)) +
+  geom_line(color = 'blue') + geom_point(color = 'blue') + geom_hline(yintercept = 0) +
+  labs(y = '°C', title = 'Mean Temperature Change of World')
 ```
 
 
