@@ -33,7 +33,7 @@ CO2_temp %>% ggplot(aes(x=World,y=Mean))+geom_point()+labs(x="CO2 World emission
 
 ```
 ```{r Temp-Change}
-source = read_csv('~/Desktop/Environment_Temperature_change_E_All_Data/Environment_Temperature_change_E_All_Data.csv')
+source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'))
 
 TemChange_Cont = source %>%
   select(Area, `Area Code (M49)`, Months, Element, Y1961, Y1962, Y1963, Y1964, Y1965, Y1966, Y1967, Y1968, Y1969,
@@ -51,7 +51,7 @@ TemChange_Year = TemChange_Cont %>%
   pivot_longer(Y1961 : Y2021, names_to = 'year', values_to = 'change') %>%
   mutate(year = as.numeric(str_sub(year, -4, -1)))
 
-world_map = st_read('~/Desktop/worldmap/ne_50m_admin_0_countries.shp', quiet = TRUE)
+world_map = st_read(here::here('dataset', 'worldmap', 'ne_50m_admin_0_countries.shp'), quiet = TRUE)
 
 TemChange_Cont = left_join(TemChange_Cont, world_map, c("Area Code (M49)" = 'ISO_N3')) %>%
   filter(!is.na(TYPE)) %>% st_as_sf()
