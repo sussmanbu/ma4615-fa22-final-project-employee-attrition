@@ -117,7 +117,8 @@ World_data<-world_forest_area %>% inner_join(World_data)
 
 World_data<-World_data %>% select(- Country)
 colnames(World_data)[9]<-"temperature"
-
+colnames(World_data)[1]<-"Country_Name"
+colnames(World_data)[3]<-"forest_area"
 
 ```
 
