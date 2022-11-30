@@ -18,6 +18,7 @@ library(GGally)
 library(patchwork)
 library(tmap)
 library(sf)
+library(tmaptools)
 print(getwd())
 data <- read_csv(here::here("dataset/loan_refusal_clean.csv"))
 load(here::here("dataset/loan_refusal.RData"))
@@ -61,16 +62,18 @@ TemChange_Cont = left_join(TemChange_Cont, world_map, c("Area Code (M49)" = 'ISO
 TemChange_Year = left_join(TemChange_Year, world_map, c("Area Code (M49)" = 'ISO_N3')) %>%
   filter(!is.na(TYPE)) %>% select(Area, year, change, geometry) %>% st_as_sf()
 
+pal7 <- c('#084A92', '#FEE7DC', '#FCC0A8', '#FB9070', '#F75A40', '#D92522', '#AC1016')
+
 total_change <- function(x, y){
   x = x - 1958
   y = y - 1958
-  Pic_data = TemChange_Cont %>% as.tibble() %>% select(x:y) %>%
+  Pic_data = TemChange_Cont %>% as_tibble() %>% select(x:y) %>%
     mutate(total = apply(., 1, sum, na.rm = TRUE)) %>%
     cbind(TemChange_Cont[, 1]) %>% select(Area, total) %>%
     cbind(TemChange_Cont[, "geometry"]) %>% st_as_sf()
-  Pic = tm_shape(world_map) + tm_borders(lwd = 2) +
+  Pic = tm_shape(world_map) + tm_borders() +
     tm_shape(Pic_data) + 
-    tm_polygons(col = 'total', palette = 'Blues', midpoint = NA, n = 7)
+    tm_polygons(col = 'total', palette = pal7, midpoint = NA, n = 7)
   return(Pic)
 }
 
