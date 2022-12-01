@@ -136,6 +136,25 @@ final_mod = lm(temperature ~ Coal + CO2emission)
 summary(final_mod)
 ```
 
+```{r checking}
+y_hat = final_mod$fitted.values
+diagnostics = lm.influence(final_mod)
+hat = diagnostics$hat
+sigmasq_hat = sum(final_mod$residuals ^ 2) / final_mod$df.residual
+std_res = final_mod$residuals / sqrt(sigmasq_hat * (1 - hat))
+diag <- tibble(y_hat, std_res)
+
+diag %>% ggplot(aes(sample = std_res)) +
+  geom_qq() + geom_qq_line() +
+  labs(x = 'Theroretical Quantiles', y = 'Sample Quantiles',
+       title = 'Checking for Normality')
+
+diag %>% ggplot(aes(y_hat, std_res)) +
+  geom_point() + geom_hline(yintercept = c(-2, 2), color = 'blue') +
+  labs(x = 'fitted values', y = 'standardized residuals',
+       title = 'Checking for Constant Variance')
+```
+
 ## Note on Attribution
 
 If you are directly quoting from a source, please make that clear. You can show quotes using `>` like this
