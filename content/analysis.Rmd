@@ -11,6 +11,7 @@ This comes from the file `content/analysis.Rmd`.
 
 We describe here our detailed data analysis.
 
+*Firstly, We want to know what factors affect and have relationships with the temperature. We want to test various variables such as “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. We are interested in answering whether those variables will lead to changes in the temperature and assume that these variables can affect or are related to temperature. We also want to compare these relationships and know which variable among those actually affects temperature most. Finally, we are wondering if our conclusions are valid and correct.
 
 ```{r}
 library(tidyverse)
@@ -25,13 +26,18 @@ load(here::here("dataset/loan_refusal.RData"))
 print(ls())
 ```
 
-```{r}
+*In order to get the relationship between year and temperature, we firstly draw the figure of years and CO2emission. It is found that with the increase of years, co2 emission also increased. Then we have the plot and find that CO2emission is also directly proportional to the weather. Therefore, we can finally get: as the years increase, the co2 emissions increase, resulting in an increase in temperature which verify our one assumption.
+
+```{r 1}
 World_data %>% ggplot(aes(y=CO2emission,x=as.numeric(Year)))+geom_point()+labs(y="CO2 World emission")
 (summary(lm(CO2emission~as.numeric(Year),data=World_data)))
 
 World_data %>% ggplot(aes(x=CO2emission,y=temperature))+geom_point()+labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
 (summary(lm(CO2emission~temperature,data=World_data)))
 ```
+
+*Secondly, we get the map that shows the degree of temperature change in each region over a fixed period of time. But all we know from this map is that the magnitude of the temperature change is different for each region. We do not know what internal changes are causing the temperature to change more. Maybe it's because of changes in the terrain or just because of the geography. We have no way of knowing and this is one limitation of our anaylsis.From this data, we can also plot the average change in temperature from year to year. As we can see, the images still appear to be positively proportional, which again confirms our inferences about the relationship between year and temperature.
+
 
 ```{r Temp-Change}
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
@@ -85,6 +91,7 @@ TempChange_Ave %>% ggplot(aes(year, TempChange_Ave)) +
   geom_line(color = 'blue') + geom_point(color = 'blue') + geom_hline(yintercept = 0) +
   labs(y = '°C', title = 'Mean Temperature Change of World')
 ```
+*Then, we let temperature always be the Y-axis, and the variables "CO2 emission", "Coal", "Gas", "population", "forest area" and "Oil" are used as the X-axis respectively. We get the conclusion that the relationship between forest area and temperature is negative. For other variables, the greater the quantity, the higher the temperature.
 
 ```{r mod}
 attach(World_data)
@@ -135,6 +142,7 @@ step(mult_lm, direction = 'both')
 final_mod = lm(temperature ~ Coal + CO2emission)
 summary(final_mod)
 ```
+*Finally, we validate our results through two ways. One of them checks for Normality by drawing the relationship between 'Theroretical Quantiles' and 'Sample Quantiles'. Secondly, the relationship between fitted values and standardized residuals is plotted to check for Constant Variance. Both of these images show that our results are basically reliable.
 
 ```{r checking}
 y_hat = final_mod$fitted.values
