@@ -118,9 +118,9 @@ World_data %>% ggplot(aes(population, temperature)) + geom_smooth(se = FALSE) +
 temp_popu_mod = lm(temperature ~ World_data$population)
 summary(temp_popu_mod)
 
-World_data %>% ggplot(aes(`forest area`, temperature)) + geom_smooth(se = FALSE) +
+World_data %>% ggplot(aes(forest_area, temperature)) + geom_smooth(se = FALSE) +
   labs(x = 'Forest Area', y = 'temperature', title = 'Temperature Change with Forest Area')
-temp_fore_mod = lm(temperature ~ `forest area`)
+temp_fore_mod = lm(temperature ~ World_data$forest_area)
 summary(temp_fore_mod)
 
 World_data %>% ggplot(aes(Oil, temperature)) + geom_smooth(se = FALSE) +
