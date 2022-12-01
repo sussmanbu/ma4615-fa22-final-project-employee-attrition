@@ -11,9 +11,11 @@ This comes from the file `content/analysis.Rmd`.
 
 We describe here our detailed data analysis.
 
-*Firstly, We want to know what factors affect and have relationships with the temperature. We want to test various variables such as “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. We are interested in answering whether those variables will lead to changes in the temperature and assume that these variables can affect or are related to temperature. We also want to compare these relationships and know which variable among those actually affects temperature most. Finally, we are wondering if our conclusions are valid and correct.
+## Motivation:
 
-```{r}
+*Firstly, We want to know what factors affect and have relationships with the temperature. We want to test various variables such as “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. We are interested in answering whether those variables will lead to changes in the temperature and assume that these variables can affect or are related to temperature. We also want to compare these relationships and know which variable among those actually affects temperature most. Finally, we are wondering if our conclusions are valid and correct. 
+
+```{r,warning=FALSE,message=FALSE}
 library(tidyverse)
 library(GGally)
 library(patchwork) 
@@ -24,22 +26,32 @@ print(getwd())
 data <- read_csv(here::here("dataset/loan_refusal_clean.csv"))
 load(here::here("dataset/loan_refusal.RData"))
 print(ls())
+
+source(
+  here::here("static", "load_and_clean_data.R"),
+  echo = FALSE)
 ```
+## General Trend:
 
 *In order to get the relationship between year and temperature, we firstly draw the figure of years and CO2emission. It is found that with the increase of years, co2 emission also increased. Then we have the plot and find that CO2emission is also directly proportional to the weather. Therefore, we can finally get: as the years increase, the co2 emissions increase, resulting in an increase in temperature which verify our one assumption.
 
-```{r 1}
-World_data %>% ggplot(aes(y=CO2emission,x=as.numeric(Year)))+geom_point()+labs(y="CO2 World emission")
+```{r 1,warning=FALSE,message=FALSE}
+World_data %>% 
+  ggplot(aes(y=CO2emission,x=as.numeric(Year)))+geom_point()+
+  labs(y="CO2 World emission")
 (summary(lm(CO2emission~as.numeric(Year),data=World_data)))
 
-World_data %>% ggplot(aes(x=CO2emission,y=temperature))+geom_point()+labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
+World_data %>% 
+  ggplot(aes(x=CO2emission,y=temperature))+geom_point()+
+  labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
 (summary(lm(CO2emission~temperature,data=World_data)))
 ```
 
+## Visualization:
 *Secondly, we get the map that shows the degree of temperature change in each region over a fixed period of time. But all we know from this map is that the magnitude of the temperature change is different for each region. We do not know what internal changes are causing the temperature to change more. Maybe it's because of changes in the terrain or just because of the geography. We have no way of knowing and this is one limitation of our anaylsis.From this data, we can also plot the average change in temperature from year to year. As we can see, the images still appear to be positively proportional, which again confirms our inferences about the relationship between year and temperature.
 
 
-```{r Temp-Change}
+```{r Temp-Change,warning=FALSE,message=FALSE}
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
 
 TemChange_Cont = source %>%
@@ -82,7 +94,8 @@ total_change <- function(x, y){
   return(Pic)
 }
 
-total_change(1961,2021) + tm_layout(main.title = 'Temperature change from 1961 to 2021') #could use to add other period
+total_change(1961,2021) + 
+  tm_layout(main.title = 'Temperature change from 1961 to 2021') #could use to add other period
 
 TempChange_Ave <- TemChange_Cont %>% as_tibble() %>% select('Y1961':'Y2021') %>%
   colSums(na.rm = TRUE)/223
@@ -91,9 +104,13 @@ TempChange_Ave %>% ggplot(aes(year, TempChange_Ave)) +
   geom_line(color = 'blue') + geom_point(color = 'blue') + geom_hline(yintercept = 0) +
   labs(y = '°C', title = 'Mean Temperature Change of World')
 ```
-*Then, we let temperature always be the Y-axis, and the variables "CO2 emission", "Coal", "Gas", "population", "forest area" and "Oil" are used as the X-axis respectively. We get the conclusion that the relationship between forest area and temperature is negative. For other variables, the greater the quantity, the higher the temperature.
 
-```{r mod}
+## Modeling:
+
+*Then, we draw a correlation matrix to see the correlation between each parameters. From the plot we find that all the parameter is highly correlated with the temperature. We let temperature always be the Y-axis, and the variables "CO2 emission", "Coal", "Gas", "population", "forest area" and "Oil" are used as the X-axis respectively. We get the conclusion that the relationship between forest area and temperature is negative. For other variables, the greater the quantity, the higher the temperature. And we find that when only test one specific parameters. All the parameter is significant when testing the linear model.However, there seems to be a problem that these parameter are highly correlated with each other, the problem of multicollinearity may appear in our model when add all the parameter in the linear model.Then we run a model with all the parameter add together. The result shows that only the parameter coal is significant. However the result indicate that add all parameter together is not a good choice. We then use the backward step wise AIC to do the model selection. The result is the parameter coal and CO2emission is significant when predicting the temperature. And our final model is temperature ~ Coal + CO2emission, the p-value of this model is small enough and the R^2 is 0.8259, which illustrate that our model can represent most of the data.
+
+
+```{r mod,warning=FALSE,message=FALSE}
 attach(World_data)
 World_data %>% select(-Country_Name, -Year) %>%
   ggpairs(upper = list(continuous = wrap('points', alpha = .3, size = .1)),
@@ -142,9 +159,13 @@ step(mult_lm, direction = 'both')
 final_mod = lm(temperature ~ Coal + CO2emission)
 summary(final_mod)
 ```
-*Finally, we validate our results through two ways. One of them checks for Normality by drawing the relationship between 'Theroretical Quantiles' and 'Sample Quantiles'. Secondly, the relationship between fitted values and standardized residuals is plotted to check for Constant Variance. Both of these images show that our results are basically reliable.
 
-```{r checking}
+## Conclusion:
+
+*Finally, we validate our results through two ways. One of them checks for Normality by drawing the relationship between 'Theroretical Quantiles' and 'Sample Quantiles'. From the plot we can find that although most of the point seems follow the line, however some points in the middle part has it's own trend, which means our model is not quite good enough. Secondly, the relationship between fitted values and standardized residuals is plotted to check for Constant Variance. It is obvious that the residual is not normally distributed since in the right lower corner there is a empty space. This may happen because there might be some multicollinearity happens between the amount usage of coal and CO2emission. However this is our limit, since most of the data that we collect such as "population", "deforestation", the use of "fossil fuel" more or less has some correlation with the CO2emission, and the CO2emission is the major cause of the climate change. Our conclusion is that CO2emission contributes a lot to the climate change. 
+
+
+```{r checking,warning=FALSE,message=FALSE}
 y_hat = final_mod$fitted.values
 diagnostics = lm.influence(final_mod)
 hat = diagnostics$hat
@@ -163,50 +184,6 @@ diag %>% ggplot(aes(y_hat, std_res)) +
        title = 'Checking for Constant Variance')
 ```
 
-## Note on Attribution
-
-If you are directly quoting from a source, please make that clear. You can show quotes using `>` like this
-
-```
-> To be or not to be.
-```
-
-> To be or not to be.
-
-Also, make sure to provide a link or citation to where you are quoting from.
 
 -------
 
-
-## Rubric: On this page
-
-you will
-
-
-* Introduce what motivates your Data Analysis (DA)
-  * Which variables and relationships are you most interested in?
-  * What questions are you interested in answering?
-* Breadth of the DA
-  * Make sure that you ask enough initial questions to explore the different variables in your data.
-  * i.e. Do you explore more than just one or two variables? Do you explore a few different relationships or many?
-* Depth of the DA
-  * When you answer one question, usually more questions arise as well. 
-  * The depth of the DA is about coming up with and exploring the answers to these questions, often iterating the process a few times.
-* Modeling and Inference 
-  * You should also include some kind of formal statistical model and/or inference. This could be a linear regression, logistic regression, hypothesis testing etc.
-  * Explain the techniques you used for validating your results.
-  * Describe the results of your modelling and make sure to give a sense of the uncertainty in your estimates and conclusions.
-* Explain the flaws and limitations of your analysis
-  * Are there some assumptions that you needed to make that might not hold? Is there other data that would help to answer your questions? ...
-* Clarity Figures
-  * Are your figures/tables/results easy to read, informative, without problems like overplotting, hard-to-read labels, etc?
-  * Each figure should provide a key insight. Too many figures or other data summaries can detract from this.
-* Clarity of Explanations
-  * Do you introduce why you are doing each analysis?
-  * How well do you explain each figure/result?
-  * Do you provide interpretations that suggest further analysis or explanations for observed phenomenon?
-* Organization and cleanliness.
-  * Make sure to remove excessive warnings, use clean easy-to-read code, organize with sections or multiple pages, use bullets, etc.
-  
-  
-**NOTE**: Your Data Analysis can be broken up into multiple pages if that helps with your organization.

@@ -7,7 +7,6 @@ featuredImage: https://upload.wikimedia.org/wikipedia/commons/7/77/Pebbleswithqu
 draft: false
 ---
 
-<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 
@@ -15,83 +14,436 @@ draft: false
 
 <p>This comes from the file <code>content/analysis.Rmd</code>.</p>
 <p>We describe here our detailed data analysis.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
-## ✓ tibble  3.1.6     ✓ dplyr   1.0.8
-## ✓ tidyr   1.1.4     ✓ stringr 1.4.0
-## ✓ readr   2.1.1     ✓ forcats 0.5.1</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>print(getwd())</code></pre>
-<pre><code>## [1] &quot;/Users/dsussman/Dropbox (Personal)/Teaching/MA_415/project_template/content&quot;</code></pre>
-<pre class="r"><code>data &lt;- read_csv(here::here(&quot;dataset/loan_refusal_clean.csv&quot;))</code></pre>
-<pre><code>## Rows: 20 Columns: 5</code></pre>
-<pre><code>## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (1): bank
-## dbl (4): min, white, himin, hiwhite
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>load(here::here(&quot;dataset/loan_refusal.RData&quot;))
+<div id="motivation" class="section level2">
+<h2>Motivation:</h2>
+<p>*Firstly, We want to know what factors affect and have relationships with the temperature. We want to test various variables such as “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. We are interested in answering whether those variables will lead to changes in the temperature and assume that these variables can affect or are related to temperature. We also want to compare these relationships and know which variable among those actually affects temperature most. Finally, we are wondering if our conclusions are valid and correct.</p>
+<pre class="r"><code>library(tidyverse)
+library(GGally)
+library(patchwork) 
+library(tmap)
+library(sf)
+
+print(getwd())</code></pre>
+<pre><code>## [1] &quot;C:/Users/smigo/Desktop/MA 415/ma4615-fa22-final-project-employee-attrition/content&quot;</code></pre>
+<pre class="r"><code>data &lt;- read_csv(here::here(&quot;dataset/loan_refusal_clean.csv&quot;))
+load(here::here(&quot;dataset/loan_refusal.RData&quot;))
 print(ls())</code></pre>
 <pre><code>## [1] &quot;data&quot;            &quot;loan_data_clean&quot;</code></pre>
-<div id="note-on-attribution" class="section level2">
-<h2>Note on Attribution</h2>
-<p>If you are directly quoting from a source, please make that clear. You can show quotes using <code>&gt;</code> like this</p>
-<pre><code>&gt; To be or not to be.</code></pre>
-<blockquote>
-<p>To be or not to be.</p>
-</blockquote>
-<p>Also, make sure to provide a link or citation to where you are quoting from.</p>
-<hr />
+<pre class="r"><code>source(
+  here::here(&quot;static&quot;, &quot;load_and_clean_data.R&quot;),
+  echo = FALSE)</code></pre>
 </div>
-<div id="rubric-on-this-page" class="section level2">
-<h2>Rubric: On this page</h2>
-<p>you will</p>
-<ul>
-<li>Introduce what motivates your Data Analysis (DA)
-<ul>
-<li>Which variables and relationships are you most interested in?</li>
-<li>What questions are you interested in answering?</li>
-</ul></li>
-<li>Breadth of the DA
-<ul>
-<li>Make sure that you ask enough initial questions to explore the different variables in your data.</li>
-<li>i.e. Do you explore more than just one or two variables? Do you explore a few different relationships or many?</li>
-</ul></li>
-<li>Depth of the DA
-<ul>
-<li>When you answer one question, usually more questions arise as well.</li>
-<li>The depth of the DA is about coming up with and exploring the answers to these questions, often iterating the process a few times.</li>
-</ul></li>
-<li>Modeling and Inference
-<ul>
-<li>You should also include some kind of formal statistical model and/or inference. This could be a linear regression, logistic regression, hypothesis testing etc.</li>
-<li>Explain the techniques you used for validating your results.</li>
-<li>Describe the results of your modelling and make sure to give a sense of the uncertainty in your estimates and conclusions.</li>
-</ul></li>
-<li>Explain the flaws and limitations of your analysis
-<ul>
-<li>Are there some assumptions that you needed to make that might not hold? Is there other data that would help to answer your questions? …</li>
-</ul></li>
-<li>Clarity Figures
-<ul>
-<li>Are your figures/tables/results easy to read, informative, without problems like overplotting, hard-to-read labels, etc?</li>
-<li>Each figure should provide a key insight. Too many figures or other data summaries can detract from this.</li>
-</ul></li>
-<li>Clarity of Explanations
-<ul>
-<li>Do you introduce why you are doing each analysis?</li>
-<li>How well do you explain each figure/result?</li>
-<li>Do you provide interpretations that suggest further analysis or explanations for observed phenomenon?</li>
-</ul></li>
-<li>Organization and cleanliness.
-<ul>
-<li>Make sure to remove excessive warnings, use clean easy-to-read code, organize with sections or multiple pages, use bullets, etc.</li>
-</ul></li>
-</ul>
-<p><strong>NOTE</strong>: Your Data Analysis can be broken up into multiple pages if that helps with your organization.</p>
+<div id="general-trend" class="section level2">
+<h2>General Trend:</h2>
+<p>*In order to get the relationship between year and temperature, we firstly draw the figure of years and CO2emission. It is found that with the increase of years, co2 emission also increased. Then we have the plot and find that CO2emission is also directly proportional to the weather. Therefore, we can finally get: as the years increase, the co2 emissions increase, resulting in an increase in temperature which verify our one assumption.</p>
+<pre class="r"><code>World_data %&gt;% 
+  ggplot(aes(y=CO2emission,x=as.numeric(Year)))+geom_point()+
+  labs(y=&quot;CO2 World emission&quot;)</code></pre>
+<p><img src="/analysis_files/figure-html/1-1.png" width="672" /></p>
+<pre class="r"><code>(summary(lm(CO2emission~as.numeric(Year),data=World_data)))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = CO2emission ~ as.numeric(Year), data = World_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1587.9  -401.5   150.3   520.0  1538.2 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -1.065e+06  4.181e+04  -25.46   &lt;2e-16 ***
+## as.numeric(Year)  5.457e+02  2.088e+01   26.14   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 844.9 on 25 degrees of freedom
+## Multiple R-squared:  0.9647, Adjusted R-squared:  0.9633 
+## F-statistic: 683.3 on 1 and 25 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>World_data %&gt;% 
+  ggplot(aes(x=CO2emission,y=temperature))+geom_point()+
+  labs(x=&quot;CO2 World emission&quot;,y=&quot;Global temp anormaly&quot;)+geom_smooth()</code></pre>
+<p><img src="/analysis_files/figure-html/1-2.png" width="672" /></p>
+<pre class="r"><code>(summary(lm(CO2emission~temperature,data=World_data)))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = CO2emission ~ temperature, data = World_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5200.8 -2092.2   -22.9  1682.9  4365.6 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    15997       1707    9.37 1.17e-09 ***
+## temperature    22225       2936    7.57 6.34e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2479 on 25 degrees of freedom
+## Multiple R-squared:  0.6963, Adjusted R-squared:  0.6841 
+## F-statistic:  57.3 on 1 and 25 DF,  p-value: 6.337e-08</code></pre>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization:</h2>
+<p>*Secondly, we get the map that shows the degree of temperature change in each region over a fixed period of time. But all we know from this map is that the magnitude of the temperature change is different for each region. We do not know what internal changes are causing the temperature to change more. Maybe it’s because of changes in the terrain or just because of the geography. We have no way of knowing and this is one limitation of our anaylsis.From this data, we can also plot the average change in temperature from year to year. As we can see, the images still appear to be positively proportional, which again confirms our inferences about the relationship between year and temperature.</p>
+<pre class="r"><code>source = read_csv(here::here(&#39;dataset&#39;,&#39;TempChange&#39;,&#39;TempChangeData.csv&#39;), show_col_types = FALSE)
+
+TemChange_Cont = source %&gt;%
+  select(Area, `Area Code (M49)`, Months, Element, Y1961, Y1962, Y1963, Y1964, Y1965, Y1966, Y1967, Y1968, Y1969,
+         Y1970, Y1971, Y1972, Y1973, Y1974, Y1975, Y1976, Y1977, Y1978, Y1979,
+         Y1980, Y1981, Y1982, Y1983, Y1984, Y1985, Y1986, Y1987, Y1988, Y1989,
+         Y1990, Y1991, Y1992, Y1993, Y1994, Y1995, Y1996, Y1997, Y1998, Y1999,
+         Y2000, Y2001, Y2002, Y2003, Y2004, Y2005, Y2006, Y2007, Y2008, Y2009,
+         Y2010, Y2011, Y2012, Y2013, Y2014, Y2015, Y2016, Y2017, Y2018, Y2019, 
+         Y2020, Y2021) %&gt;%
+  filter(Months == &#39;Meteorological year&#39;, Element == &#39;Temperature change&#39;) %&gt;%
+  select(-Months, -Element) %&gt;%
+  mutate(`Area Code (M49)` = str_sub(`Area Code (M49)`, -3, -1))
+
+TemChange_Year = TemChange_Cont %&gt;%
+  pivot_longer(Y1961 : Y2021, names_to = &#39;year&#39;, values_to = &#39;change&#39;) %&gt;%
+  mutate(year = as.numeric(str_sub(year, -4, -1)))
+
+world_map = st_read(here::here(&#39;dataset&#39;, &#39;worldmap&#39;, &#39;ne_50m_admin_0_countries.shp&#39;), quiet = TRUE)
+
+TemChange_Cont = left_join(TemChange_Cont, world_map, c(&quot;Area Code (M49)&quot; = &#39;ISO_N3&#39;)) %&gt;%
+  filter(!is.na(TYPE)) %&gt;% st_as_sf()
+
+TemChange_Year = left_join(TemChange_Year, world_map, c(&quot;Area Code (M49)&quot; = &#39;ISO_N3&#39;)) %&gt;%
+  filter(!is.na(TYPE)) %&gt;% select(Area, year, change, geometry) %&gt;% st_as_sf()
+
+pal7 &lt;- c(&#39;#084A92&#39;, &#39;#FEE7DC&#39;, &#39;#FCC0A8&#39;, &#39;#FB9070&#39;, &#39;#F75A40&#39;, &#39;#D92522&#39;, &#39;#AC1016&#39;)
+
+total_change &lt;- function(x, y){
+  x = x - 1958
+  y = y - 1958
+  Pic_data = TemChange_Cont %&gt;% as_tibble() %&gt;% select(x:y) %&gt;%
+    mutate(total = apply(., 1, sum, na.rm = TRUE)) %&gt;%
+    cbind(TemChange_Cont[, 1]) %&gt;% select(Area, total) %&gt;%
+    cbind(TemChange_Cont[, &quot;geometry&quot;]) %&gt;% st_as_sf()
+  Pic = tm_shape(world_map) + tm_borders() +
+    tm_shape(Pic_data) + 
+    tm_polygons(col = &#39;total&#39;, palette = pal7, midpoint = NA, n = 7, title = &#39;Temperature\n Change&#39;) +
+    tm_layout(frame = FALSE, legend.position = c(&#39;left&#39;, &#39;center&#39;))
+  return(Pic)
+}
+
+total_change(1961,2021) + 
+  tm_layout(main.title = &#39;Temperature change from 1961 to 2021&#39;) #could use to add other period</code></pre>
+<p><img src="/analysis_files/figure-html/Temp-Change-1.png" width="672" /></p>
+<pre class="r"><code>TempChange_Ave &lt;- TemChange_Cont %&gt;% as_tibble() %&gt;% select(&#39;Y1961&#39;:&#39;Y2021&#39;) %&gt;%
+  colSums(na.rm = TRUE)/223
+TempChange_Ave &lt;- tibble(year = c(1961:2021), TempChange_Ave) 
+TempChange_Ave %&gt;% ggplot(aes(year, TempChange_Ave)) +
+  geom_line(color = &#39;blue&#39;) + geom_point(color = &#39;blue&#39;) + geom_hline(yintercept = 0) +
+  labs(y = &#39;°C&#39;, title = &#39;Mean Temperature Change of World&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/Temp-Change-2.png" width="672" /></p>
+</div>
+<div id="modeling" class="section level2">
+<h2>Modeling:</h2>
+<p>*Then, we draw a correlation matrix to see the correlation between each parameters. From the plot we find that all the parameter is highly correlated with the temperature. We let temperature always be the Y-axis, and the variables “CO2 emission”, “Coal”, “Gas”, “population”, “forest area” and “Oil” are used as the X-axis respectively. We get the conclusion that the relationship between forest area and temperature is negative. For other variables, the greater the quantity, the higher the temperature. And we find that when only test one specific parameters. All the parameter is significant when testing the linear model.However, there seems to be a problem that these parameter are highly correlated with each other, the problem of multicollinearity may appear in our model when add all the parameter in the linear model.Then we run a model with all the parameter add together. The result shows that only the parameter coal is significant. However the result indicate that add all parameter together is not a good choice. We then use the backward step wise AIC to do the model selection. The result is the parameter coal and CO2emission is significant when predicting the temperature. And our final model is temperature ~ Coal + CO2emission, the p-value of this model is small enough and the R^2 is 0.8259, which illustrate that our model can represent most of the data.</p>
+<pre class="r"><code>attach(World_data)
+World_data %&gt;% select(-Country_Name, -Year) %&gt;%
+  ggpairs(upper = list(continuous = wrap(&#39;points&#39;, alpha = .3, size = .1)),
+          lower = list(continuous = wrap(&#39;cor&#39;, size = 4)),
+          axisLabels = &#39;none&#39;, progress = FALSE) </code></pre>
+<p><img src="/analysis_files/figure-html/mod-1.png" width="672" /></p>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(as.numeric(Year), temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;year&#39;, y = &#39;temperature&#39;, title = &#39;The Trend of Temperature&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-2.png" width="672" /></p>
+<pre class="r"><code>temp_year_mod = lm(temperature ~ as.numeric(Year))
+summary(temp_year_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ as.numeric(Year))
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.12341 -0.07423  0.00021  0.06246  0.16598 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -35.464236   4.233418  -8.377 1.00e-08 ***
+## as.numeric(Year)   0.017984   0.002114   8.509 7.49e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08554 on 25 degrees of freedom
+## Multiple R-squared:  0.7433, Adjusted R-squared:  0.7331 
+## F-statistic: 72.41 on 1 and 25 DF,  p-value: 7.492e-09</code></pre>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(CO2emission, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;CO2&#39;, y = &#39;temperature&#39;, title = &#39;Temperature Change with CO2 Emission&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-3.png" width="672" /></p>
+<pre class="r"><code>temp_co2_mod = lm(temperature ~ CO2emission)
+summary(temp_co2_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ CO2emission)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.13152 -0.06437 -0.01030  0.05931  0.18604 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.316e-01  1.189e-01  -2.788  0.00998 ** 
+## CO2emission  3.133e-05  4.138e-06   7.570 6.34e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.09306 on 25 degrees of freedom
+## Multiple R-squared:  0.6963, Adjusted R-squared:  0.6841 
+## F-statistic:  57.3 on 1 and 25 DF,  p-value: 6.337e-08</code></pre>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(Coal, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;Coal Use&#39;, y = &#39;temperature&#39;, title = &#39;Temperature Change with Coal Use&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-4.png" width="672" /></p>
+<pre class="r"><code>temp_coal_mod = lm(temperature ~ Coal)
+summary(temp_coal_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ Coal)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.166223 -0.078367 -0.002889  0.070558  0.219690 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 5.695e-03  9.331e-02   0.061    0.952    
+## Coal        1.634e-05  2.691e-06   6.073  2.4e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.1073 on 25 degrees of freedom
+## Multiple R-squared:  0.596,  Adjusted R-squared:  0.5798 
+## F-statistic: 36.88 on 1 and 25 DF,  p-value: 2.401e-06</code></pre>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(Gas, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;Gas Use&#39;, y = &#39;temperature&#39;, title = &#39;Temperature Change with Gas Use&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-5.png" width="672" /></p>
+<pre class="r"><code>temp_gas_mod = lm(temperature ~ Gas)
+summary(temp_gas_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ Gas)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.134942 -0.073709  0.007743  0.069314  0.185481 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -1.508e-01  9.080e-02  -1.661    0.109    
+## Gas          2.673e-05  3.360e-06   7.956  2.6e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08984 on 25 degrees of freedom
+## Multiple R-squared:  0.7169, Adjusted R-squared:  0.7055 
+## F-statistic: 63.29 on 1 and 25 DF,  p-value: 2.6e-08</code></pre>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(population, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;Population&#39;, y = &#39;temperature&#39;, title = &#39;Temperature Change with Population&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-6.png" width="672" /></p>
+<pre class="r"><code>temp_popu_mod = lm(temperature ~ World_data$population)
+summary(temp_popu_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ World_data$population)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.122164 -0.074997  0.001933  0.063170  0.164295 
+## 
+## Coefficients:
+##                         Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           -8.393e-01  1.641e-01  -5.114 2.78e-05 ***
+## World_data$population  2.199e-10  2.570e-11   8.559 6.72e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08517 on 25 degrees of freedom
+## Multiple R-squared:  0.7455, Adjusted R-squared:  0.7354 
+## F-statistic: 73.25 on 1 and 25 DF,  p-value: 6.718e-09</code></pre>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(forest_area, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;Forest Area&#39;, y = &#39;temperature&#39;, title = &#39;Temperature Change with Forest Area&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-7.png" width="672" /></p>
+<pre class="r"><code>temp_fore_mod = lm(temperature ~ World_data$forest_area)
+summary(temp_fore_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ World_data$forest_area)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.11542 -0.06062 -0.02032  0.04844  0.18013 
+## 
+## Coefficients:
+##                        Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)            15.62625    1.76724   8.842 3.61e-09 ***
+## World_data$forest_area -0.48411    0.05678  -8.527 7.21e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08541 on 25 degrees of freedom
+## Multiple R-squared:  0.7441, Adjusted R-squared:  0.7339 
+## F-statistic:  72.7 on 1 and 25 DF,  p-value: 7.208e-09</code></pre>
+<pre class="r"><code>World_data %&gt;% ggplot(aes(Oil, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = &#39;Oil&#39;, y = &#39;temperature&#39;, title = &#39;Temperature Change with Oil Use&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/mod-8.png" width="672" /></p>
+<pre class="r"><code>temp_oil_mod = lm(temperature ~ Oil)
+summary(temp_oil_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ Oil)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.112841 -0.061000  0.004719  0.058876  0.165391 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -8.893e-01  1.629e-01  -5.461 1.14e-05 ***
+## Oil          3.262e-05  3.652e-06   8.932 2.98e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08248 on 25 degrees of freedom
+## Multiple R-squared:  0.7614, Adjusted R-squared:  0.7518 
+## F-statistic: 79.77 on 1 and 25 DF,  p-value: 2.979e-09</code></pre>
+<pre class="r"><code>mult_lm = lm(temperature ~ World_data$population + World_data$forest_area +Gas + Oil + Coal + CO2emission)
+summary(mult_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ World_data$population + World_data$forest_area + 
+##     Gas + Oil + Coal + CO2emission)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.124607 -0.041798 -0.008823  0.043462  0.126966 
+## 
+## Coefficients:
+##                          Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)            -4.057e+00  1.752e+01  -0.232   0.8192  
+## World_data$population  -1.641e-10  3.761e-10  -0.436   0.6673  
+## World_data$forest_area  9.575e-02  4.998e-01   0.192   0.8500  
+## Gas                     2.262e-05  4.138e-05   0.547   0.5907  
+## Oil                     1.010e-05  3.387e-05   0.298   0.7686  
+## Coal                   -5.808e-05  2.161e-05  -2.687   0.0142 *
+## CO2emission             1.265e-04  6.085e-05   2.079   0.0507 .
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.07731 on 20 degrees of freedom
+## Multiple R-squared:  0.8323, Adjusted R-squared:  0.782 
+## F-statistic: 16.54 on 6 and 20 DF,  p-value: 8.356e-07</code></pre>
+<pre class="r"><code>step(mult_lm, direction = &#39;both&#39;)</code></pre>
+<pre><code>## Start:  AIC=-132.34
+## temperature ~ World_data$population + World_data$forest_area + 
+##     Gas + Oil + Coal + CO2emission
+## 
+##                          Df Sum of Sq     RSS     AIC
+## - World_data$forest_area  1  0.000219 0.11976 -134.29
+## - Oil                     1  0.000532 0.12007 -134.22
+## - World_data$population   1  0.001138 0.12068 -134.08
+## - Gas                     1  0.001786 0.12133 -133.94
+## &lt;none&gt;                                0.11954 -132.34
+## - CO2emission             1  0.025833 0.14538 -129.06
+## - Coal                    1  0.043166 0.16271 -126.01
+## 
+## Step:  AIC=-134.29
+## temperature ~ World_data$population + Gas + Oil + Coal + CO2emission
+## 
+##                          Df Sum of Sq     RSS     AIC
+## - Oil                     1  0.000313 0.12007 -136.22
+## - Gas                     1  0.003586 0.12335 -135.49
+## - World_data$population   1  0.003761 0.12352 -135.45
+## &lt;none&gt;                                0.11976 -134.29
+## + World_data$forest_area  1  0.000219 0.11954 -132.34
+## - CO2emission             1  0.026410 0.14617 -130.91
+## - Coal                    1  0.044855 0.16462 -127.70
+## 
+## Step:  AIC=-136.22
+## temperature ~ World_data$population + Gas + Coal + CO2emission
+## 
+##                          Df Sum of Sq     RSS     AIC
+## - Gas                     1  0.003367 0.12344 -137.47
+## - World_data$population   1  0.003554 0.12363 -137.43
+## &lt;none&gt;                                0.12007 -136.22
+## + Oil                     1  0.000313 0.11976 -134.29
+## + World_data$forest_area  1  0.000001 0.12007 -134.22
+## - CO2emission             1  0.038759 0.15883 -130.66
+## - Coal                    1  0.057791 0.17786 -127.61
+## 
+## Step:  AIC=-137.47
+## temperature ~ World_data$population + Coal + CO2emission
+## 
+##                          Df Sum of Sq     RSS     AIC
+## - World_data$population   1  0.000666 0.12411 -139.33
+## &lt;none&gt;                                0.12344 -137.47
+## + Gas                     1  0.003367 0.12007 -136.22
+## + World_data$forest_area  1  0.000922 0.12252 -135.67
+## + Oil                     1  0.000094 0.12335 -135.49
+## - CO2emission             1  0.040865 0.16431 -131.75
+## - Coal                    1  0.054906 0.17835 -129.54
+## 
+## Step:  AIC=-139.33
+## temperature ~ Coal + CO2emission
+## 
+##                          Df Sum of Sq     RSS     AIC
+## &lt;none&gt;                                0.12411 -139.33
+## + World_data$forest_area  1  0.001587 0.12252 -137.67
+## + World_data$population   1  0.000666 0.12344 -137.47
+## + Gas                     1  0.000479 0.12363 -137.43
+## + Oil                     1  0.000017 0.12409 -137.33
+## - Coal                    1  0.092379 0.21649 -126.30
+## - CO2emission             1  0.163827 0.28793 -118.60</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ Coal + CO2emission)
+## 
+## Coefficients:
+## (Intercept)         Coal  CO2emission  
+##  -1.157e+00   -5.154e-05    1.217e-04</code></pre>
+<pre class="r"><code>final_mod = lm(temperature ~ Coal + CO2emission)
+summary(final_mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ Coal + CO2emission)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.12459 -0.03976 -0.00787  0.04951  0.14293 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -1.157e+00  2.158e-01  -5.361 1.67e-05 ***
+## Coal        -5.154e-05  1.219e-05  -4.227 0.000297 ***
+## CO2emission  1.217e-04  2.163e-05   5.629 8.55e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.07191 on 24 degrees of freedom
+## Multiple R-squared:  0.8259, Adjusted R-squared:  0.8114 
+## F-statistic: 56.91 on 2 and 24 DF,  p-value: 7.773e-10</code></pre>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion:</h2>
+<p>*Finally, we validate our results through two ways. One of them checks for Normality by drawing the relationship between ‘Theroretical Quantiles’ and ‘Sample Quantiles’. From the plot we can find that although most of the point seems follow the line, however some points in the middle part has it’s own trend, which means our model is not quite good enough. Secondly, the relationship between fitted values and standardized residuals is plotted to check for Constant Variance. It is obvious that the residual is not normally distributed since in the right lower corner there is a empty space. This may happen because there might be some multicollinearity happens between the amount usage of coal and CO2emission. However this is our limit, since most of the data that we collect such as “population”, “deforestation”, the use of “fossil fuel” more or less has some correlation with the CO2emission, and the CO2emission is the major cause of the climate change. Our conclusion is that CO2emission contributes a lot to the climate change.</p>
+<pre class="r"><code>y_hat = final_mod$fitted.values
+diagnostics = lm.influence(final_mod)
+hat = diagnostics$hat
+sigmasq_hat = sum(final_mod$residuals ^ 2) / final_mod$df.residual
+std_res = final_mod$residuals / sqrt(sigmasq_hat * (1 - hat))
+diag &lt;- tibble(y_hat, std_res)
+
+diag %&gt;% ggplot(aes(sample = std_res)) +
+  geom_qq() + geom_qq_line() +
+  labs(x = &#39;Theroretical Quantiles&#39;, y = &#39;Sample Quantiles&#39;,
+       title = &#39;Checking for Normality&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/checking-1.png" width="672" /></p>
+<pre class="r"><code>diag %&gt;% ggplot(aes(y_hat, std_res)) +
+  geom_point() + geom_hline(yintercept = c(-2, 2), color = &#39;blue&#39;) +
+  labs(x = &#39;fitted values&#39;, y = &#39;standardized residuals&#39;,
+       title = &#39;Checking for Constant Variance&#39;)</code></pre>
+<p><img src="/analysis_files/figure-html/checking-2.png" width="672" /></p>
+<hr />
 </div>
