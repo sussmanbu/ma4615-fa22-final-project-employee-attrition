@@ -31,14 +31,10 @@ World_data %>% ggplot(aes(y=CO2emission,x=as.numeric(Year)))+geom_point()+labs(y
 
 World_data %>% ggplot(aes(x=CO2emission,y=temperature))+geom_point()+labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
 (summary(lm(CO2emission~temperature,data=World_data)))
-
-
-
-
-
 ```
+
 ```{r Temp-Change}
-source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'))
+source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
 
 TemChange_Cont = source %>%
   select(Area, `Area Code (M49)`, Months, Element, Y1961, Y1962, Y1963, Y1964, Y1965, Y1966, Y1967, Y1968, Y1969,
@@ -75,11 +71,12 @@ total_change <- function(x, y){
     cbind(TemChange_Cont[, "geometry"]) %>% st_as_sf()
   Pic = tm_shape(world_map) + tm_borders() +
     tm_shape(Pic_data) + 
-    tm_polygons(col = 'total', palette = pal7, midpoint = NA, n = 7)
+    tm_polygons(col = 'total', palette = pal7, midpoint = NA, n = 7, title = 'Temperature\n Change') +
+    tm_layout(frame = FALSE, legend.position = c('left', 'center'))
   return(Pic)
 }
 
-total_change(1961,2021) #between any two years
+total_change(1961,2021) + tm_layout(main.title = 'Temperature change from 1961 to 2021') #could use to add other period
 
 TempChange_Ave <- TemChange_Cont %>% as_tibble() %>% select('Y1961':'Y2021') %>%
   colSums(na.rm = TRUE)/223
@@ -89,55 +86,54 @@ TempChange_Ave %>% ggplot(aes(year, TempChange_Ave)) +
   labs(y = '°C', title = 'Mean Temperature Change of World')
 ```
 
-
-```{r year-variables}
-p1 = World_data %>% ggplot(aes(as.numeric(Year),temperature)) + geom_line() +
-  labs(x = 'year', y = 'temperature', title = 'The trend of temperature')
-
-p2 = World_data %>% ggplot(aes(as.numeric(Year),forest_area)) + geom_line() +
-  labs(x = 'year', y = 'forest area', title = 'The trend of forest area')
-
-p3 = World_data %>% ggplot(aes(as.numeric(Year),population)) + geom_line() +
-  labs(x = 'year', y = 'population', title = 'The trend of population')
-
-p4 = World_data %>% ggplot(aes(as.numeric(Year),Gas)) + geom_line() +
-  labs(x = 'year', y = 'Gas', title = 'Gas trend')
-
-p5 = World_data %>% ggplot(aes(as.numeric(Year),Oil)) + geom_line() +
-  labs(x = 'year', y = 'Oil', title = 'Oil trend')
-
-p6 = World_data %>% ggplot(aes(as.numeric(Year),Coal)) + geom_line() +
-  labs(x = 'year', y = 'Coal', title = 'Coal trend')
-
-p7 = World_data %>% ggplot(aes(as.numeric(Year),CO2emission)) + geom_line() +
-  labs(x = 'year', y = 'CO2emission', title = 'CO2emission trend')
-
-p1 / (p2|p3)
-(p4|p5) / (p6|p7)
-```
-
 ```{r mod}
 attach(World_data)
 World_data %>% select(-Country_Name, -Year) %>%
   ggpairs(upper = list(continuous = wrap('points', alpha = .3, size = .1)),
-          lower = list(continuous = wrap('cor', size = 4))) 
+          lower = list(continuous = wrap('cor', size = 4)),
+          axisLabels = 'none', progress = FALSE) 
 
-mlr1 = lm(temperature ~ World_data$population + World_data$forest_area +Gas + Oil + Coal + CO2emission)
-summary(mlr1)
+World_data %>% ggplot(aes(as.numeric(Year), temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'year', y = 'temperature', title = 'The Trend of Temperature')
+temp_year_mod = lm(temperature ~ as.numeric(Year))
+summary(temp_year_mod)
 
-mlr2 = lm(temperature ~ World_data$population + Gas + Oil + Coal + CO2emission)
-summary(mlr2)
+World_data %>% ggplot(aes(CO2emission, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'CO2', y = 'temperature', title = 'Temperature Change with CO2 Emission')
+temp_co2_mod = lm(temperature ~ CO2emission)
+summary(temp_co2_mod)
 
-mlr3 = lm(temperature ~ World_data$population + Gas + Coal + CO2emission)
-summary(mlr3)
+World_data %>% ggplot(aes(Coal, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'Coal Use', y = 'temperature', title = 'Temperature Change with Coal Use')
+temp_coal_mod = lm(temperature ~ Coal)
+summary(temp_coal_mod)
 
-mlr4 = lm(temperature ~ World_data$population + Coal + CO2emission)
-summary(mlr4)
+World_data %>% ggplot(aes(Gas, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'Gas Use', y = 'temperature', title = 'Temperature Change with Gas Use')
+temp_gas_mod = lm(temperature ~ Gas)
+summary(temp_gas_mod)
 
-mlr5 = lm(temperature ~ Coal + CO2emission)
-summary(mlr5)
+World_data %>% ggplot(aes(population, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'Population', y = 'temperature', title = 'Temperature Change with Population')
+temp_popu_mod = lm(temperature ~ World_data$population)
+summary(temp_popu_mod)
 
-step(mlr, direction = 'both') #same with above
+World_data %>% ggplot(aes(`forest area`, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'Forest Area', y = 'temperature', title = 'Temperature Change with Forest Area')
+temp_fore_mod = lm(temperature ~ `forest area`)
+summary(temp_fore_mod)
+
+World_data %>% ggplot(aes(Oil, temperature)) + geom_smooth(se = FALSE) +
+  labs(x = 'Oil', y = 'temperature', title = 'Temperature Change with Oil Use')
+temp_oil_mod = lm(temperature ~ Oil)
+summary(temp_oil_mod)
+
+mult_lm = lm(temperature ~ World_data$population + World_data$forest_area +Gas + Oil + Coal + CO2emission)
+summary(mult_lm)
+
+step(mult_lm, direction = 'both')
+final_mod = lm(temperature ~ Coal + CO2emission)
+summary(final_mod)
 ```
 
 ## Note on Attribution
