@@ -15,7 +15,7 @@ We describe here our detailed data analysis.
 ```{r}
 library(tidyverse)
 library(GGally)
-library(patchwork)
+library(patchwork) 
 library(tmap)
 library(sf)
 
