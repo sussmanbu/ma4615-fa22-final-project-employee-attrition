@@ -63,23 +63,23 @@ print(ls())</code></pre>
   ggplot(aes(x=CO2emission,y=temperature))+geom_point()+
   labs(x=&quot;CO2 World emission&quot;,y=&quot;Global temp anormaly&quot;)+geom_smooth()</code></pre>
 <p><img src="/analysis_files/figure-html/1-2.png" width="672" /></p>
-<pre class="r"><code>(summary(lm(CO2emission~temperature,data=World_data)))</code></pre>
+<pre class="r"><code>(summary(lm(temperature~CO2emission,data=World_data)))</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = CO2emission ~ temperature, data = World_data)
+## lm(formula = temperature ~ CO2emission, data = World_data)
 ## 
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -5200.8 -2092.2   -22.9  1682.9  4365.6 
+##      Min       1Q   Median       3Q      Max 
+## -0.13152 -0.06437 -0.01030  0.05931  0.18604 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)    15997       1707    9.37 1.17e-09 ***
-## temperature    22225       2936    7.57 6.34e-08 ***
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.316e-01  1.189e-01  -2.788  0.00998 ** 
+## CO2emission  3.133e-05  4.138e-06   7.570 6.34e-08 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 2479 on 25 degrees of freedom
+## Residual standard error: 0.09306 on 25 degrees of freedom
 ## Multiple R-squared:  0.6963, Adjusted R-squared:  0.6841 
 ## F-statistic:  57.3 on 1 and 25 DF,  p-value: 6.337e-08</code></pre>
 </div>
