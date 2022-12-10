@@ -1,0 +1,15 @@
+---
+title: blog-post-8
+author: Daniel Sussman
+date: '2022-12-09'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-12-09T22:41:44-05:00'
+featuredVideo: ~
+featuredImage: ~
+---
