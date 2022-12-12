@@ -23,6 +23,16 @@ We describe here our detailed data analysis.
 
 *Ever so often we hear of the holes being poked in our ozone layer or of the crops dying from droughts, yet many still do not believe that climate change exists. Consequently, we decided to investigate the fluctuation temperature and possibly shed light on some factors that may aid scientists in their plan to combat it. We will not be searching for the cause of climate change but rather a possible relationship between temperature and various other factors; correlation does not equate to causation. Variables we plan to test include “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. While our plots will demonstrate the relationships amongst our variables, we must compare them to ensure we can identify the variables that are strongly related to temperature. In the case we do notice patterns of extreme temperatures hinting at climate change, we wonder how beneficial our findings may be since they don't directly expose a cause. Additionally, our conclusions will be limited to the factors our data presents us and will not take into count external factors such as politics, pandemics, etc. that may be responsible for the behavior of our data. However, we hope that our conclusions can encourage further research and increased environmental awareness.
 
+## Initial Questions
+We will be testing many different variables throughout our research and to give you an insight into how we plan to test our variables, below we have some initial questions as we enter our investigation.
+
+- Considering that climate change is defined as the gradual change of temperature over time, does climate change exist?
+- How does the world's growing population induce a growing demand/supply for natural resources such as coal and oil?
+- Big factories are not the only ones responsible for pollution. How does the CO2 levels of regions with high populations compare to regions with less individuals?
+- Is there a strong correlation between CO2 emission and temperature?
+- Trees take in carbon dioxide and release oxygen, an element vital for survival. Thus a region with a higher population or higher CO2 emissions should have more forest area. Do countries follow this advice? Does the ranking of regions based on their forest area match the ranking of their CO2 emissions or population?
+
+
 ```{r,warning=FALSE,message=FALSE}
 library(tidyverse)
 library(GGally)
