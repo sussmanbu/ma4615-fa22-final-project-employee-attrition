@@ -3,7 +3,7 @@ title: Data
 description:
 toc: true
 featuredVideo:
-featuredImage: images/data-import-cheatsheet-thumbs.png
+featuredImage: images/data.jpg
 draft: false
 ---
 
@@ -14,32 +14,62 @@ draft: false
 
 <p>As greenhouse gas emissions blanket the Earth, they trap the sun’s heat. This leads to global warming and climate change. The world is now warming faster than at any point in recorded history. Warmer temperatures over time are changing weather patterns and disrupting the usual balance of nature. This poses many risks to human beings and all other forms of life on Earth. Our group is interested in find the relationship between the increase of global temperature and the main factors affecting it.</p>
 <hr />
-<p>##Data Link:</p>
-<p>world Temperature: <a href="https://datahub.io/core/global-temp#data" class="uri">https://datahub.io/core/global-temp#data</a>
-world CO2 emission: <a href="https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world" class="uri">https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world</a>
-Global fossil fuel consumption: <a href="https://datahub.io/core/global-temp#data" class="uri">https://datahub.io/core/global-temp#data</a><br />
-Forest area: <a href="https://data.worldbank.org/indicator/AG.LND.FRST.ZS" class="uri">https://data.worldbank.org/indicator/AG.LND.FRST.ZS</a></p>
+<div id="data-link" class="section level2">
+<h2>Data Link:</h2>
+<p>world Temperature: <a href="https://datahub.io/core/global-temp#data" class="uri">https://datahub.io/core/global-temp#data</a></p>
+<p>world CO2 emission: <a href="https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world" class="uri">https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world</a></p>
+<p>Global fossil fuel consumption: <a href="https://datahub.io/core/global-temp#data" class="uri">https://datahub.io/core/global-temp#data</a></p>
+<p>Forest area: <a href="https://data.worldbank.org/indicator/AG.LND.FRST.ZS" class="uri">https://data.worldbank.org/indicator/AG.LND.FRST.ZS</a></p>
+<p>Population: <a href="https://data.worldbank.org/indicator/SP.POP.TOTL" class="uri">https://data.worldbank.org/indicator/SP.POP.TOTL</a></p>
 <hr />
-<p>Variable:</p>
-<p>*Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two datasets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available timeseries of global-scale temperature anomalies are calculated with respect to the 20th century average.</p>
-<p>*CO2 emission:Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the unit is MtCO₂e</p>
-<p>*Gas:Global primary energy consumption by gas, measured in terawatt-hours (TWh).</p>
-<p>*Oil:Global primary energy consumption by oil, measured in terawatt-hours (TWh).</p>
-<p>*Coal:Global primary energy consumption by coal, measured in terawatt-hours (TWh).</p>
-<p>*Forest_area:</p>
-<p>*Population:</p>
+</div>
+<div id="variable" class="section level2">
+<h2>Variable:</h2>
+<ul>
+<li><p>Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two datasets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available timeseries of global-scale temperature anomalies are calculated with respect to the 20th century average.</p></li>
+<li><p>CO2 emission: Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the unit is MtCO₂e</p></li>
+<li><p>Gas: Global primary energy consumption by gas, measured in terawatt-hours (TWh).</p></li>
+<li><p>Oil: Global primary energy consumption by oil, measured in terawatt-hours (TWh).</p></li>
+<li><p>Coal: Global primary energy consumption by coal, measured in terawatt-hours (TWh).</p></li>
+<li><p>Forest_area: proportion of forest area when compare to land area in the world.</p></li>
+<li><p>Population: Global population.</p></li>
+</ul>
+</div>
+<div id="packages" class="section level2">
+<h2>Packages:</h2>
+<p>we install “readxl” packages to load in the data, since two of the data are in the excel format.</p>
 <hr />
-<p>world data cleanig:</p>
-<p>CO2 emission:</p>
-<p>In this data, the data collected Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the years are present in the column from 2016 to 1990, we first use arrange to make the year in the right order from 1990 to 2016, then we find that data under is 1990 is not numerical, we as_double to make it right. Since year in most data are in each row instead of column, we use a pivot_longer to change it. We also group by country and year.</p>
-<p>global temperature:</p>
+</div>
+<div id="world-data-cleanig" class="section level2">
+<h2>world data cleanig:</h2>
+<div id="co2-emission" class="section level3">
+<h3>CO2 emission:</h3>
+<p>In this data, the data collected Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the first column is the country name all over the world, in this data the years are present in the column from 2016 to 1990, we first use arrange to make the year in the right order from 1990 to 2016, then we find that data under is 1990 is not numerical, we as_double to make it right. Since year in most data are in each row instead of column, we use a pivot_longer to change it. We also group by country and year.</p>
+</div>
+<div id="global-temperature" class="section level3">
+<h3>global temperature:</h3>
 <p>This data is measured in two Source, one is from the GISS Surface Temperature (GISTEMP), and the other is from the global component of Climate at a Glance (GCAG). Since the GCAG data has more decimal and is more accurate, we decided to use source from GCAG and use filter to remove other data. we only need the world data, so we use filter to only have world data for later analysis. Since the global temperature data is also measured from 1880 to 2016, we use a inner_join to join this data into the previous one.</p>
-<p>fossil fuel:</p>
+</div>
+<div id="fossil-fuel" class="section level3">
+<h3>fossil fuel:</h3>
 <p>The fossil fuel data has four parameters in it, year, consumption by gas, consumption by oil, and consumption by coal. These three parameters are collected together in this data since coal, oil, or gas are the major fossil fuel, and burning these fossil fuel will produce greenhouse gas together. We change the name for the last three parameter into “gas”,“Oil”, and “Coal”, which will be more clear than the original name. Also this data is collected from 1800 to 2021, the time period is much longer than our main data, we use inner_join again to combine these three fossil fuel data into a more complete data, which will be easier to use for later analysis.</p>
+</div>
+<div id="forest-area" class="section level3">
+<h3>forest area:</h3>
+<p>The data is quite the same as the CO2 data, the first column is the name of all country, then comes up with the year from 2960 to 2020 in each column. We use the same method as before, first filter out the world data, then use pivot_longer to make the data easy to combine with other data.</p>
+</div>
+<div id="population" class="section level3">
+<h3>population:</h3>
+<p>The source of this data is the same as the previous one, and the cleaning method is the same as we do in the forest area data.</p>
+</div>
+<div id="whold-data" class="section level3">
+<h3>Whold data</h3>
+<p>After we clean each individual data, we use a inner_join to combine the new data into the previous one. Finally we came up with a complete data called “World_data”. However in this data we find that in previous join there shows up two column which both represent the name of country. We use select and change the name of some columns to make the data clear and easy to understand.</p>
 <hr />
 <pre class="r"><code>source(
   here::here(&quot;static&quot;, &quot;load_and_clean_data.R&quot;),
-  echo = FALSE # Use echo=FALSE or omit it to avoid code output  
+  echo = FALSE
+  
 )</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
@@ -58,77 +88,44 @@ Forest area: <a href="https://data.worldbank.org/indicator/AG.LND.FRST.ZS" class
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ## New names:
-## Rows: 274 Columns: 22
+## Rows: 274 Columns: 4
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
-## chr  (1): Source
-## dbl (21): ...1, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11...
+## chr (1): Source
+## dbl (3): ...1, Year, Mean
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>CO2_clean&lt;-CO2_emissions %&gt;% select(Country,34:6)
-CO2_clean$`1990`&lt;-as.double(CO2_clean$`1990`)</code></pre>
-<pre><code>## Warning: NAs introduced by coercion</code></pre>
-<pre class="r"><code>CO2_clean_1 &lt;- CO2_clean %&gt;% pivot_longer(cols = c(&quot;1990&quot;:&quot;2018&quot;),names_to = &quot;Year&quot;,values_to = &quot;CO2emission&quot;)
+CO2_clean$`1990`&lt;-as.double(CO2_clean$`1990`)
+CO2_clean_1 &lt;- CO2_clean %&gt;% 
+  pivot_longer(cols = c(&quot;1990&quot;:&quot;2018&quot;),names_to = &quot;Year&quot;,values_to = &quot;CO2emission&quot;)
 CO2_clean_1&lt;- CO2_clean_1 %&gt;% group_by(Country,Year)
 
 global_temp&lt;-annual_temperature %&gt;% filter(Source==&quot;GCAG&quot;) %&gt;% select(Year,Mean)
 global_temp$Year&lt;-as.character(global_temp$Year)
 World_data&lt;-CO2_clean_1 %&gt;% filter(Country==&quot;World&quot;) %&gt;% 
-  inner_join(global_temp)</code></pre>
-<pre><code>## Joining, by = &quot;Year&quot;</code></pre>
-<pre class="r"><code>colnames(fossil_fuel)[which(names(fossil_fuel)==&quot;Gas..TWh..direct.energy.&quot;)]&lt;- &quot;Gas&quot;
+  inner_join(global_temp)
+
+colnames(fossil_fuel)[which(names(fossil_fuel)==&quot;Gas..TWh..direct.energy.&quot;)]&lt;- &quot;Gas&quot;
 colnames(fossil_fuel)[which(names(fossil_fuel)==&quot;Oil..TWh..direct.energy.&quot;)]&lt;- &quot;Oil&quot;
 colnames(fossil_fuel)[which(names(fossil_fuel)==&quot;Coal..TWh..direct.energy.&quot;)]&lt;- &quot;Coal&quot;
 fossil_fuel&lt;-fossil_fuel %&gt;% select(Year:Coal)
 fossil_fuel$Year&lt;-as.character(fossil_fuel$Year)
-World_data&lt;-fossil_fuel %&gt;% inner_join(World_data)</code></pre>
-<pre><code>## Joining, by = &quot;Year&quot;</code></pre>
-<hr />
-<p>Note how I use the <code>here::here</code> function from the <a href="https://here.r-lib.org/articles/here.html"><code>here</code> package</a> to avoid path problems.
-This function is used to specify directories within the project’s root directory.
-You should never use absolute paths (eg. <code>/Users/danielsussman/path/to/project/</code> or <code>C:\\MA415\\Final_Project\\</code>) and using <code>here</code> ensures that it doesn’t matter what the current working directory is as long as you have this RStudio Project open.</p>
-<hr />
-<div id="files-in-static" class="section level2">
-<h2>Files in static</h2>
-<div id="load_and_clean_data.r" class="section level3">
-<h3><code>load_and_clean_data.R</code></h3>
-<p>The idea behind this file is that someone coming to your website could largely replicate your analyses after running this script on the original data sets to clean them.
-This file might create a derivative data set that you then use for your subsequent analysis.
-Note that you don’t need to run this script from every post/page.
-Instead, you can load in the results of this script, which could be plain text files or <code>.RData</code> files. In your data page you’ll describe how these results were created. If you have a very large data set, you might save smaller data sets that you can use for exploration purposes.
-To link to this file, you can use <code>[cleaning script](/load_and_clean_data.R)</code>.</p>
-<p>When you are loading in data, I recommend using the <code>here::here</code> function to specify the file path. This function is used to specify a path relative to your project’s root directory. Hence, you can read a file using eg, <code>read_csv(here::here("dataset/data_file.csv"))</code>.</p>
-</div>
-<div id="shiny-interactive" class="section level3">
-<h3>Shiny Interactive</h3>
-<p>If you are using a shiny interactive, you’ll need to keep that in a separate folder (i.e. not in <code>static</code> or <code>content</code>). For the shiny interactive you’ll need to publish the app on <code>shinyapps.io</code> where the app can be run. When you publish, make sure to include any data sets you are loading in among the files you publish since those datasets will need to be loaded by your app.</p>
+World_data&lt;-fossil_fuel %&gt;% inner_join(World_data)
+
+world_pop&lt;-population %&gt;% filter(`Country Name`==&quot;World&quot;) %&gt;% 
+  select(`Country Name`,&quot;1960&quot;:&quot;2021&quot;) %&gt;% 
+  pivot_longer(cols = c(&quot;1960&quot;:&quot;2021&quot;),names_to = &quot;Year&quot;,values_to = &quot;population&quot;)
+World_data&lt;-world_pop %&gt;% inner_join(World_data)
+
+world_forest_area&lt;-forest_area %&gt;% filter(`Country Name`==&quot;World&quot;) %&gt;% 
+  select(`Country Name`,&quot;1960&quot;:&quot;2021&quot;) %&gt;% 
+  pivot_longer(cols = c(&quot;1960&quot;:&quot;2021&quot;),names_to = &quot;Year&quot;,values_to = &quot;forest area&quot;)
+World_data&lt;-world_forest_area %&gt;% inner_join(World_data)
+
+World_data&lt;-World_data %&gt;% select(- Country)
+colnames(World_data)[9]&lt;-&quot;temperature&quot;</code></pre>
 <hr />
 </div>
-</div>
-<div id="rubric-on-this-page" class="section level2">
-<h2>Rubric: On this page</h2>
-<p>you will</p>
-<ul>
-<li>Describe where/how to find data.
-<ul>
-<li>You must include a link to the original data source(s). Make sure to provide attribution to those who collected the data.</li>
-<li>Why was the data collected/curated? Who put it together? (This is important, if you don’t know why it was collected then that might not be a good dataset to look at.</li>
-</ul></li>
-<li>Describe the different data files used and what each variable means.
-<ul>
-<li>If you have many variables then only describe the most relevant ones and summarize the rest.</li>
-</ul></li>
-<li>Describe any cleaning you had to do for your data.
-<ul>
-<li>You <em>must</em> include a link to your <code>load_and_clean_data.R</code> file.</li>
-<li>Also, describe any additional R packages you used outside of those covered in class.</li>
-<li>Describe and show code for how you combined multiple data files and any cleaning that was necessary for that.</li>
-<li>Some repetition of what you do in your <code>load_and_clean_data.R</code> file is fine and encouraged if it helps explain what you did.</li>
-</ul></li>
-<li>Organization, clarity, cleanliness of the page
-<ul>
-<li>Make sure to remove excessive warnings, use clean easy-to-read code (without side scrolling), organize with sections, use bullets and other organization tools, etc.</li>
-</ul></li>
-</ul>
 </div>
