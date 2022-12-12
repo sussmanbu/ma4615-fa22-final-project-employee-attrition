@@ -1,9 +1,15 @@
 ---
-title: Analysis
+title: Analysis #2
 description:
 toc: true
+authors: Minghao Sun, Yifei Cui, Marielle Belomme, Yiling Qian, Yuchen Wen
+tags: []
+categories: []
+series: []
+date: 2022-12-12T01:18:54-05:00
+lastmod: 2022-12-12T01:18:54-05:00
 featuredVideo:
-featuredImage: https://upload.wikimedia.org/wikipedia/commons/7/77/Pebbleswithquarzite.jpg
+featuredImage:
 draft: false
 ---
 
@@ -185,7 +191,3 @@ diag %>% ggplot(aes(y_hat, std_res)) +
   labs(x = 'fitted values', y = 'standardized residuals',
        title = 'Checking for Constant Variance')
 ```
-
-
--------
-
