@@ -17,7 +17,7 @@ world Temperature: https://datahub.io/core/global-temp#data
 
 world CO2 emission: https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world
 
-Global fossil fuel consumption: https://datahub.io/core/global-temp#data  
+Global fossil fuel consumption: https://ourworldindata.org/fossil-fuels  
 
 Forest area: https://data.worldbank.org/indicator/AG.LND.FRST.ZS
 
