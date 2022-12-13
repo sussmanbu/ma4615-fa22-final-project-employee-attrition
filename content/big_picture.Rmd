@@ -2,7 +2,7 @@
 title: Reduce, Reuse, Recycle!
 description:
 toc: true
-featuredImage: (images/rrr.png)
+featuredImage: images/rrr.png
 featuredVideo:
 draft: false
 --- 
