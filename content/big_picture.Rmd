@@ -2,10 +2,10 @@
 title: Reduce, Reuse, Recycle!
 description:
 toc: true
-featuredImage: ![](/./big_picture_files/rrr.png)
+featuredImage: (images/rrr.png)
 featuredVideo:
 draft: false
----
+--- 
 
 This comes from the file `content/big_picture.Rmd`.
 
@@ -27,6 +27,8 @@ Infrared waves in the atmosphere are not interfered with by oxygen or nitrogen. 
 It's not the same with CO2 and other greenhouse gases. Carbon dioxide, for example, absorbs energy at a range of wavelengths ranging from 2,000 to 15,000 nanometers, which overlaps with infrared energy. CO2 vibrates and re-emits infrared energy in all directions as it absorbs this energy. Half of that energy is lost to space, and the other half is returned to Earth as heat, contributing to the 'greenhouse effect.'
 
 We don't have thousands of years to wait for nature to absorb the CO2 flood. By then, billions of people would have suffered and died as a result of the effects of climate change; mass extinctions would have occurred, and our beautiful planet would be unrecognizable. Much of the damage and suffering can be avoided by decarbonizing our energy supply, removing CO2 from the atmosphere, and developing more sustainable ways of thriving. Learn how you, your community, and the environment can benefit from reducing, reusing, and recycling by saving money, energy, and natural resources. Recycling programs are managed at the state and local levels; learn more about recycling in your area.
+
+
 ---
 
 ## Rubric: Other components
@@ -62,3 +64,6 @@ All lab required posts are present.
 Each page (including the home page) has a nice featured image associated with it.
 Your about page is up to date and clean.
 You have removed the generic posts from the initial site template.
+
+
+

@@ -40,10 +40,7 @@ library(patchwork)
 library(tmap)
 library(sf)
 
-print(getwd())
-data <- read_csv(here::here("dataset/loan_refusal_clean.csv"))
-load(here::here("dataset/loan_refusal.RData"))
-print(ls())
+
 
 source(
   here::here("static", "load_and_clean_data.R"),
