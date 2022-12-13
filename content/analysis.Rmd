@@ -11,6 +11,8 @@ This comes from the file `content/analysis.Rmd`.
 
 We describe here our detailed data analysis.
 
+[second analysis page](/analysis2/)
+
 ## Motivation:
 
 *Firstly, We want to know what factors affect and have relationships with the temperature. We want to test various variables such as “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. We are interested in answering whether those variables will lead to changes in the temperature and assume that these variables can affect or are related to temperature. We also want to compare these relationships and know which variable among those actually affects temperature most. Finally, we are wondering if our conclusions are valid and correct. 

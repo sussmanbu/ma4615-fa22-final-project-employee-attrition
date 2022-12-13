@@ -80,9 +80,10 @@ After we clean each individual data, we use a inner_join to combine the new data
 
 ```{r}
 source(
-  here::here("static", "load_and_clean_data.R"),
-  echo = FALSE
+  here::here("static", "load_and_clean_data.R"), 
+  echo = FALSE, # Use echo=FALSE or omit it to avoid code output  
   
+
 )
 ```
 
@@ -105,8 +106,12 @@ fossil_fuel<-fossil_fuel %>% select(Year:Coal)
 fossil_fuel$Year<-as.character(fossil_fuel$Year)
 World_data<-fossil_fuel %>% inner_join(World_data)
 
-world_pop<-population %>% filter(`Country Name`=="World") %>% 
-  select(`Country Name`,"1960":"2021") %>% 
+
+
+world_pop<-population %>% filter(`Country Name`=="World") %>% select(`Country Name`,"1960":"2021") %>% 
+
+
+
   pivot_longer(cols = c("1960":"2021"),names_to = "Year",values_to = "population")
 World_data<-world_pop %>% inner_join(World_data)
 
@@ -119,6 +124,7 @@ World_data<-World_data %>% select(- Country)
 colnames(World_data)[9]<-"temperature"
 colnames(World_data)[1]<-"Country_Name"
 colnames(World_data)[3]<-"forest_area"
+
 
 ```
 
