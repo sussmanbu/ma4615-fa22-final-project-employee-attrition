@@ -120,9 +120,31 @@ grid.text('Mean Temperature Change of World (°C)', .5 , 1, )
 ```
 
 ```{r}
-#MeanChange <- TemChange_Year %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE))
-#MeanChange %>% arrange(meanChange) %>% head(5)
-#MeanChange %>% arrange(meanChange) %>% tail(5)
+MeanChange <- TemChange_Year %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE))
+MeanChange %>% arrange(meanChange) %>% head(5) %>%
+  rbind(MeanChange %>% arrange(meanChange) %>% tail(5)) %>% 
+  ggplot(aes(reorder(Area, desc(meanChange)), meanChange)) + geom_bar(stat = 'identity') +
+  coord_flip() + labs(title = 'Top and Bot 5 Mean Temperature Change Area from 1961-2021',
+                      x = 'Countries & Regions', y = 'Mean Change')
+
+#Select 5 developed countries and 5 developing countries WHICH ARE
+#US840, UK826, JAPAN392, AUSTRALIA036, CANADA124
+#CHINA156, RUSSIA643, BRAZIL076, INDIA356, South Africa710
+Selected <- TemChange_Year %>% 
+  filter(`Area Code (M49)` %in% c('840','826','392','036','124','156','643','076','356','710')) %>%
+  distinct(Area, year, change) %>% 
+  mutate(Area = str_replace_all(Area, c('China, mainland' = 'China', 'Russian Federation' = 'Russia', 'United Kingdom of Great Britain and Northern Ireland' = 'United Kingdom', 'United States of America' = 'United States')), developed = ifelse(Area %in% c('United States', 'United Kingdom', 'Japan', 'Australia', 'Canada'), 'Developed', 'Developing')) 
+
+Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE)) %>%
+  mutate(developed = ifelse(Area %in% c('United States', 'United Kingdom', 'Japan', 'Australia', 'Canada'), 
+                            'Developed', 'Developing')) %>% 
+  ggplot(aes(reorder(Area, desc(meanChange)), meanChange)) + 
+  geom_bar(aes(fill = developed), stat = 'identity') +
+  labs(title = 'Mean Temperature Change between Developed and Developing Country',
+       x = 'Country', y = 'Mean temperature Change(°C)') + coord_flip() 
+#maybe temperature increase in developing countries faster than developed, India and SA may have a lower latitude so the temperature change is not as significant
+
+
 #choose US CHINA RUSSIA ENGLAND AUSTRALIA Pitcairn Serbia
 #TemChange_Year%>%filter(`Area Code (M49)` %in% c('036','156','643','826','840')) %>%
 #  distinct(Area, year, change) %>% 
