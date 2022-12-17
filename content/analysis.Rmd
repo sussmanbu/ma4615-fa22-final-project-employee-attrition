@@ -140,10 +140,8 @@ Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE
                             'Developed', 'Developing')) %>% 
   ggplot(aes(reorder(Area, desc(meanChange)), meanChange)) + 
   geom_bar(aes(fill = developed), stat = 'identity') +
-  labs(title = 'Mean Temperature Change between Developed and Developing Country',
+  labs(title = 'Mean Temperature Change between Developed and Developing Country from 1961-2021',
        x = 'Country', y = 'Mean temperature Change(°C)') + coord_flip() 
-
-country_level = c('Russia','Canada','China','Brazil','United States','Australia','South Africa','United Kingdom','Japan','India')
 
 #maybe temperature increase in developing countries faster than developed, India and SA may have a lower latitude so the temperature change is not as significant
 
@@ -163,7 +161,16 @@ Fao_emission <- Fao_emission %>% select(Area, `Area Code (M49)`, Element, Item, 
   mutate(Area = str_replace_all(Area, c('China, mainland' = 'China', 'Russian Federation' = 'Russia',
                                 'United Kingdom of Great Britain and Northern Ireland' = 'United Kingdom',
                                 'United States of America' = 'United States')))
-Fao_emission%>%distinct(Year)
+#Fao_emission%>%distinct(Year)
+Selected %>% filter(year %in% 1990:2020) %>% group_by(Area) %>% 
+  summarise(meanChange = mean(change, na.rm = TRUE)) %>%mutate(developed = ifelse(Area %in% c('United States', 'United Kingdom', 'Japan', 'Australia', 'Canada'),'Developed', 'Developing')) %>% 
+  ggplot(aes(reorder(Area, desc(meanChange)), meanChange)) + 
+  geom_bar(aes(fill = developed), stat = 'identity') +
+  labs(title = 'Mean Temperature Change between Developed and Developing Country \nfrom 1990-2020',
+       x = 'Country', y = 'Mean temperature Change(°C)') + coord_flip() 
+
+country_level = c('Russia','Canada','China','Brazil','United Kingdom','United States','Australia','South Africa','Japan','India')
+
 Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Value)) %>%
   ungroup() %>% group_by(Area, Element) %>% summarise(meanEmission = mean(emission)) %>%
   ungroup() %>% mutate(Area = factor(Area, levels = country_level)) %>%
@@ -173,7 +180,7 @@ Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Valu
   facet_wrap(~ Element, nrow = 1, scales = 'free_x') + coord_flip() +
   labs(x = 'Countries', y = 'Mean Emissions',
        title = 'Mean Emissions of CH4, N2O and CO2 from 1990-2020')
-
+#need to consider the population and latitude of the country
 ```
 
 
