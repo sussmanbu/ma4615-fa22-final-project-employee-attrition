@@ -52,7 +52,7 @@ World_data %>%
 
 ```{r Temp-Change,warning=FALSE,message=FALSE}
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
-
+Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = FALSE)
 TemChange_Cont = source %>%
   select(Area, `Area Code (M49)`, Months, Element, 
          Y1961, Y1962, Y1963, Y1964, Y1965, Y1966, Y1967, Y1968, Y1969,
@@ -142,6 +142,9 @@ Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE
   geom_bar(aes(fill = developed), stat = 'identity') +
   labs(title = 'Mean Temperature Change between Developed and Developing Country',
        x = 'Country', y = 'Mean temperature Change(°C)') + coord_flip() 
+
+country_level = c('Russia','Canada','China','Brazil','United States','Australia','South Africa','United Kingdom','Japan','India')
+
 #maybe temperature increase in developing countries faster than developed, India and SA may have a lower latitude so the temperature change is not as significant
 
 
@@ -153,6 +156,24 @@ Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE
 #                                'United States of America' = 'United States'))) %>%
 #  ggplot(aes(year, change, color = Area)) + geom_line() + 
 #  labs(color = 'Country') + scale_colour_viridis_d()
+```
+
+```{r}
+Fao_emission <- Fao_emission %>% select(Area, `Area Code (M49)`, Element, Item, Year, Value) %>%
+  mutate(Area = str_replace_all(Area, c('China, mainland' = 'China', 'Russian Federation' = 'Russia',
+                                'United Kingdom of Great Britain and Northern Ireland' = 'United Kingdom',
+                                'United States of America' = 'United States')))
+Fao_emission%>%distinct(Year)
+Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Value)) %>%
+  ungroup() %>% group_by(Area, Element) %>% summarise(meanEmission = mean(emission)) %>%
+  ungroup() %>% mutate(Area = factor(Area, levels = country_level)) %>%
+  mutate(developed = ifelse(Area %in% c('United States', 'United Kingdom', 'Japan', 'Australia', 'Canada'), 
+                            'Developed', 'Developing')) %>%
+  ggplot(aes(Area, meanEmission,fill=developed)) + geom_bar(stat = 'identity') +
+  facet_wrap(~ Element, nrow = 1, scales = 'free_x') + coord_flip() +
+  labs(x = 'Countries', y = 'Mean Emissions',
+       title = 'Mean Emissions of CH4, N2O and CO2 from 1990-2020')
+
 ```
 
 
