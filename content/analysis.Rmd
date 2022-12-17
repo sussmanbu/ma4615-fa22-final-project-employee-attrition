@@ -23,7 +23,7 @@ library(GGally)
 library(patchwork) 
 library(tmap)
 library(sf)
-
+library(spiralize)
 
 
 source(
@@ -54,7 +54,8 @@ World_data %>%
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
 
 TemChange_Cont = source %>%
-  select(Area, `Area Code (M49)`, Months, Element, Y1961, Y1962, Y1963, Y1964, Y1965, Y1966, Y1967, Y1968, Y1969,
+  select(Area, `Area Code (M49)`, Months, Element, 
+         Y1961, Y1962, Y1963, Y1964, Y1965, Y1966, Y1967, Y1968, Y1969,
          Y1970, Y1971, Y1972, Y1973, Y1974, Y1975, Y1976, Y1977, Y1978, Y1979,
          Y1980, Y1981, Y1982, Y1983, Y1984, Y1985, Y1986, Y1987, Y1988, Y1989,
          Y1990, Y1991, Y1992, Y1993, Y1994, Y1995, Y1996, Y1997, Y1998, Y1999,
@@ -75,34 +76,63 @@ TemChange_Cont = left_join(TemChange_Cont, world_map, c("Area Code (M49)" = 'ISO
   filter(!is.na(TYPE)) %>% st_as_sf()
 
 TemChange_Year = left_join(TemChange_Year, world_map, c("Area Code (M49)" = 'ISO_N3')) %>%
-  filter(!is.na(TYPE)) %>% select(Area, year, change, geometry) %>% st_as_sf()
+  filter(!is.na(TYPE)) %>% select(Area, `Area Code (M49)`, year, change, geometry) %>% st_as_sf()
 
 pal7 <- c('#084A92', '#FEE7DC', '#FCC0A8', '#FB9070', '#F75A40', '#D92522', '#AC1016')
 
-total_change <- function(x, y){
+mean_change <- function(x, y){
   x = x - 1958
   y = y - 1958
   Pic_data = TemChange_Cont %>% as_tibble() %>% select(x:y) %>%
-    mutate(total = apply(., 1, sum, na.rm = TRUE)) %>%
-    cbind(TemChange_Cont[, 1]) %>% select(Area, total) %>%
+    mutate(mean = apply(., 1, mean, na.rm = TRUE)) %>%
+    cbind(TemChange_Cont[, 1]) %>% select(Area, mean) %>%
     cbind(TemChange_Cont[, "geometry"]) %>% st_as_sf()
   Pic = tm_shape(world_map) + tm_borders() +
     tm_shape(Pic_data) + 
-    tm_polygons(col = 'total', palette = pal7, midpoint = NA, n = 7, title = 'Temperature\n Change') +
-    tm_layout(frame = FALSE, legend.position = c('left', 'center'))
+    tm_polygons(col = 'mean', palette = pal7, midpoint = NA, n = 5, 
+                title = 'Mean of\nTemperature\nChange') +
+    tm_layout(legend.position = c('left', 'center'), bg.color = 'skyblue')
   return(Pic)
 }
 
-total_change(1961,2021) + 
-  tm_layout(main.title = 'Temperature change from 1961 to 2021') #could use to add other period
+mean_change(1961,2021) + 
+  tm_layout(main.title = 'Mean of Temperature change from 1961 to 2021')#could use to add other period
 
 TempChange_Ave <- TemChange_Cont %>% as_tibble() %>% select('Y1961':'Y2021') %>%
   colSums(na.rm = TRUE)/223
 TempChange_Ave <- tibble(year = c(1961:2021), TempChange_Ave) 
-TempChange_Ave %>% ggplot(aes(year, TempChange_Ave)) +
-  geom_line(color = 'blue') + geom_point(color = 'blue') + geom_hline(yintercept = 0) +
-  labs(y = '°C', title = 'Mean Temperature Change of World')
+
+#TempChange_Ave %>% ggplot(aes(year, TempChange_Ave)) +
+#  geom_line(color = 'blue') + geom_point(color = 'blue') + geom_hline(yintercept = 0) +
+#  labs(y = '°C', title = 'Mean Temperature Change of World') #After 1976 the mean temp change above 0
+
+spiral_initialize(xlim = c(1961, 2021), start = 360, end = 360*3, scale_by = 'angle',
+                  polar_lines_by = 12)
+spiral_track(ylim = c(-.25, 1.5), height = .65)
+spiral_axis(major_at = seq(1961, 2021, by = 1), labels = 1961:2021, h = 'top')
+spiral_lines(TempChange_Ave$year, TempChange_Ave$TempChange_Ave, area = TRUE,
+             gp = gpar(fill = 6, col = NA))
+spiral_lines(x = TempChange_Ave$year, y = 0)
+spiral_yaxis()
+grid.text('Mean Temperature Change of World (°C)', .5 , 1, )
+
+
 ```
+
+```{r}
+#MeanChange <- TemChange_Year %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE))
+#MeanChange %>% arrange(meanChange) %>% head(5)
+#MeanChange %>% arrange(meanChange) %>% tail(5)
+#choose US CHINA RUSSIA ENGLAND AUSTRALIA Pitcairn Serbia
+#TemChange_Year%>%filter(`Area Code (M49)` %in% c('036','156','643','826','840')) %>%
+#  distinct(Area, year, change) %>% 
+#  mutate(Area = str_replace_all(Area, c('China, mainland' = 'China', 'Russian Federation' = 'Russia',
+#                                'United Kingdom of Great Britain and Northern Ireland' = 'United Kingdom',
+#                                'United States of America' = 'United States'))) %>%
+#  ggplot(aes(year, change, color = Area)) + geom_line() + 
+#  labs(color = 'Country') + scale_colour_viridis_d()
+```
+
 
 ## Modeling:
 
