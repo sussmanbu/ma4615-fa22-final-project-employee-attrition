@@ -171,16 +171,32 @@ Selected %>% filter(year %in% 1990:2020) %>% group_by(Area) %>%
 
 country_level = c('Russia','Canada','China','Brazil','United Kingdom','United States','Australia','South Africa','Japan','India')
 
-Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Value)) %>%
+Selected_emis <- Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Value)) %>%
   ungroup() %>% group_by(Area, Element) %>% summarise(meanEmission = mean(emission)) %>%
   ungroup() %>% mutate(Area = factor(Area, levels = country_level)) %>%
   mutate(developed = ifelse(Area %in% c('United States', 'United Kingdom', 'Japan', 'Australia', 'Canada'), 
-                            'Developed', 'Developing')) %>%
+                            'Developed', 'Developing')) 
+Selected_emis %>%
   ggplot(aes(Area, meanEmission,fill=developed)) + geom_bar(stat = 'identity') +
   facet_wrap(~ Element, nrow = 1, scales = 'free_x') + coord_flip() +
   labs(x = 'Countries', y = 'Mean Emissions',
        title = 'Mean Emissions of CH4, N2O and CO2 from 1990-2020')
 #need to consider the population and latitude of the country
+
+population %>% select(`Country Name`, '1990':'2020') %>%
+  filter(`Country Name` %in% c('Russia','Canada','China','Brazil','United Kingdom','United States','Australia','South Africa','Japan','India','Russian Federation')) %>%
+  mutate(Area = ifelse(`Country Name`=='Russian Federation','Russia',`Country Name`)) %>%
+  pivot_longer('1990':'2020', names_to = 'year') %>% group_by(Area) %>%
+  summarise(meanpop = mean(value)) %>% 
+  left_join(Selected_emis, by = 'Area') %>%
+  transmute(Area = factor(Area, levels = country_level), Element ,
+            Emission_capita = meanEmission/meanpop, developed) %>%
+  ggplot(aes(Area, Emission_capita, fill=developed)) + geom_bar(stat = 'identity') +
+  facet_wrap(~ Element, nrow = 1, scales = 'free_x') + coord_flip() +
+  labs(x = 'Countries', y = 'Mean Emissions',
+       title = 'Per Capita Emissions of CH4, N2O and CO2 from 1990-2020')
+#Temperatures in countries with higher latitudes are more likely to increasing as a result of rising global temperatures？Countries at low latitudes, which are in the tropics, have high temperatures, and thus the temperature change is not obvious? Temperature changes in countries with moderate latitudes are more likely to fit with their emissions? 
+
 ```
 
 
