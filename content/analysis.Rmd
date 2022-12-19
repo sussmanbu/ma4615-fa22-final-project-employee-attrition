@@ -24,7 +24,8 @@ library(patchwork)
 library(tmap)
 library(sf)
 library(spiralize)
-library()
+library(ggpmisc)
+library(car)
 
 source(
   here::here("static", "load_and_clean_data.R"),
@@ -141,37 +142,80 @@ diag %>% ggplot(aes(y_hat, std_res)) +
 ```
 
 Start at here
+## Motivation:
+In order to get the relationship between year and temperature, we firstly draw the figure of temperature and CO2emission with yeas individually, then we draw the plow between temperature and CO2emission to find whether or not there is a correlation between them.
+
 1.TEM & Year
 ```{r}
-Temp_Year_Mod = World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% 
+Temp_Year_Mod = World_data %>% mutate(Year = as.numeric(Year)) %>% 
   lm(temperature ~ Year, data = .)
+
+
+World_data %>% mutate(Year = as.numeric(Year) ) %>% ggplot(aes(Year, temperature)) +
+  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
+
 broom::tidy(Temp_Year_Mod) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3)))
-
-World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% ggplot(aes(Year, temperature)) +
-  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
+The is the plot between the temperature and years from 1990 to 2016. The temperature is not labeled in actual temperature in  Celsius, instead it is measured in the difference between that year and the average temperature in 20th Century. As we can see, the change in temperature  has been fluctuating between these 26 years. The overall all trend of temperature is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of temperature almost follow the model: temperature=0.018*year-35.5. The R square adjusted is 0.73, It means the data follow the model well and every one unit increase in year will also increase 0.018 towards the intercept when predicting the temperature.
+
+
 comment
 2.CO2 & Year
 ```{r}
-CO2_Year_Mod = World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% 
-  lm(CO2emission ~ Year, data = .)
+CO2_Year_Mod = World_data %>% mutate(Year = as.numeric(Year) ) %>% 
+  lm(CO2emission/1000 ~ Year, data = .)
+
+
+World_data %>% mutate(Year = as.numeric(Year) ) %>% ggplot(aes(Year, CO2emission/1000)) +
+  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
+
 broom::tidy(CO2_Year_Mod) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3)))
-
-World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% ggplot(aes(Year, CO2emission)) +
-  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
+The is the plot between the CO2 emission and years from 1990 to 2016. The unit of CO2 is labeled in 1000 MtCO₂e. As we can see, the change in CO2 emission  has been fluctuating between these 26 years, but the trend is clear. The overall all trend is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of CO2 emission almost follow the model: CO2 emission=0.546*year-1064.614. The R square adjusted is 0.96, It means the data is highly correlated with years and every one unit increase in year will also increase 0.546 towards the intercept when predicting the CO2 emission.
+
+```{r}
+acf(World_data$CO2emission, main="")
+pacf(World_data$CO2emission, main="")
+```
+These two plot shows whether time series appears in this data. The autocorrelation plot is a geometric plot, the partial autocorrelation plot has one significant abnormal point, which indicates the CO2 emission follows a AR(1) model, and the CO2 emission of a certain year is highly correlated with the previous year's data. 
+
+
 3.TEM&CO2
 ```{r}
 Temp_CO2_Mod = World_data %>% lm(temperature ~ log(CO2emission), data = .) %>% summary()
-broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3)))
 
 World_data %>% ggplot(aes(CO2emission, temperature)) + geom_point() + 
   stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
-```
 
+broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
+  mutate(across(where(is.numeric), ~round(., 3)))
+```
+The is the plot between the CO2 emission and temperature from 1990 to 2016. We are interesting to find the relationship between CO2 emission and temperature. As we can see, the change in temperature is increasing when the CO2 emission is also increasing from 22500 to around 26000. Then the temperature does not change as the CO2 emission continue increase. When the CO2 emission is around 31000, the temperature increase as the CO2 emission increase again. The overall all trend is there's a positive correlation between temperature and CO2 emission, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of these two variables almost follow the model: temperature=0.893*log(CO2 emission)-8.586. The R square adjusted is 0.68, It means 68% of the data can be explain by our model and and every one unit increase in log(CO2emission) will also increase 0.893 towards the intercept when predicting the temperature.
+
+
+```{r}
+hist(World_data$temperature)
+
+final_mod = lm(temperature ~ log(Coal) + log(CO2emission))
+summary(final_mod)
+vif(final_mod)
+
+temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission), 
+    data = World_data))
+plot(World_data$temperature,temp.res,xlab = "temperature",ylab = "Residual")
+
+temp.res=resid(lm(temperature ~ Coal + CO2emission, 
+    data = World_data))
+plot(World_data$temperature,temp.res,xlab = "temperature",ylab = "Residual")
+
+predict_model<-(-5.154e-05*Coal+1.217e-04*CO2emission-1.157e+00)
+plot(density(predict_model),lwd = 5, col = "Green",main = "Density between Obsearvation and Predicted Model")
+lines(density(World_data$temperature), lwd = 2)
+
+
+```
 
 -------
 
