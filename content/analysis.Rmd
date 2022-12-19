@@ -192,54 +192,36 @@ broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>%
 
 World_data %>% ggplot(aes(log(CO2emission), temperature)) + geom_point() + 
   stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
-
-
 ```
 The is the plot between the CO2 emission and temperature from 1990 to 2016. We are interesting to find the relationship between CO2 emission and temperature. As we can see, the change in temperature is increasing when the CO2 emission is also increasing from 22500 to around 26000. Then the temperature does not change as the CO2 emission continue increase. When the CO2 emission is around 31000, the temperature increase as the CO2 emission increase again. The overall all trend is there's a positive correlation between temperature and CO2 emission, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of these two variables almost follow the model: temperature=0.893*log(CO2 emission)-8.586. The R square adjusted is 0.68, It means 68% of the data can be explain by our model and and every one unit increase in log(CO2emission) will also increase 0.893 towards the intercept when predicting the temperature.
 
 
-
+4.multi
 ```{r}
-hist(World_data$temperature)
+transform_World_data = World_data %>% mutate(forest_area = log(forest_area), population = log(population), 
+                                         Gas = log(Gas), Oil = log(Oil),  Coal = log(Coal), 
+                                         CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
 
-final_mod = lm(temperature ~ log(Coal) + log(CO2emission))
-summary(final_mod)
+mult_full_model = lm(temperature ~ ., data = transform_World_data) %>% summary()
+broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+
+step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
+                         log(Coal) + log(CO2emission), data = World_data), direction = 'both')
+
+final_mod = lm(temperature ~ log(Coal) + log(CO2emission), data = World_data) %>% summary()
+broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+
 vif(final_mod)
 
 temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission), 
     data = World_data))
 plot(World_data$temperature,temp.res,xlab = "temperature",ylab = "Residual")
 
-temp.res=resid(lm(temperature ~ Coal + CO2emission, 
-    data = World_data))
-plot(World_data$temperature,temp.res,xlab = "temperature",ylab = "Residual")
-
 predict_model<-(-5.154e-05*Coal+1.217e-04*CO2emission-1.157e+00)
 plot(density(predict_model),lwd = 5, col = "Green",main = "Density between Obsearvation and Predicted Model")
 lines(density(World_data$temperature), lwd = 2)
-
-
-```
-
-4.multi
-```{r}
-trans_World_data = World_data %>% mutate(Year = as.numeric(Year)-1989, forest_area = log(forest_area), 
-                      population = log(population), Gas = log(Gas), Oil = log(Oil), 
-                      Coal = log(Coal), CO2emission = log(CO2emission)) %>% select(-Country_Name)
-lm(temperature ~ ., data = trans_World_data) %>% summary()
-x <- model.matrix(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) + 
-                    log(Coal) + log(CO2emission), data = World_data)
-y <- World_data$temperature
-fit <- glmnet::glmnet(x, y, alpha = 1)
-autoplot(fit, cex = 1.5)
-
-lm(temperature ~ log(forest_area) + log(Oil) + log(population), data = World_data) %>%
-  summary()
-
-
-step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
-                         log(Coal) + log(CO2emission), data = World_data), direction = 'both')
-lm(formula = temperature ~ log(Coal) + log(CO2emission), data = World_data)%>%summary()
 ```
 
 5.ridge regression
