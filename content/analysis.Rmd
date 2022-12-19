@@ -177,7 +177,7 @@ CO2_clean_1 %>% filter(!Country %in% c('World','European Union (27)')) %>% mutat
   distinct(Country, meanCO2, developed) %>%
   ggplot(aes(developed, meanCO2,color = developed)) + geom_boxplot() + ylim(-10,100) +
   geom_jitter(shape=16, position=position_jitter(0.2), alpha = .4) + 
-  labs(title = 'Mean Emission of CO2 Form 1990-2018', x = 'Development Phase',
+  labs(title = 'Mean Emission of CO2 Form 1990-2016', x = 'Development Phase',
        y = 'Mean Emission of CO2')
 
 TemChange_Year %>% mutate(developed = ifelse(Area %in% all_developed, 'Developed', 'Developing')) %>%
@@ -186,7 +186,7 @@ TemChange_Year %>% mutate(developed = ifelse(Area %in% all_developed, 'Developed
   distinct(Area, meanTempChange, developed) %>%
   ggplot(aes(developed, meanTempChange, color = developed)) + geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.2), alpha = .4) + 
-  labs(title = 'Mean Temperature Change Form 1990-2018', x = 'Development Phase',
+  labs(title = 'Mean Temperature Change Form 1990-2016', x = 'Development Phase',
        y = 'Mean Temperature Change')
 ```
 
