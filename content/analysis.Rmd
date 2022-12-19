@@ -150,12 +150,14 @@ In order to get the relationship between year and temperature, we firstly draw t
 Temp_Year_Mod = World_data %>% mutate(Year = as.numeric(Year)) %>% 
   lm(temperature ~ Year, data = .)
 
-
 World_data %>% mutate(Year = as.numeric(Year) ) %>% ggplot(aes(Year, temperature)) +
-  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
+  geom_point() + stat_poly_line(se = FALSE) + 
+  stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC'))) +
+  labs(title = 'Temperature over Time', y = '°C',
+       caption = 'Compared with the Average Temperature in 20th Century')
 
 broom::tidy(Temp_Year_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3)))
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
 ```
 The is the plot between the temperature and years from 1990 to 2016. The temperature is not labeled in actual temperature in  Celsius, instead it is measured in the difference between that year and the average temperature in 20th Century. As we can see, the change in temperature  has been fluctuating between these 26 years. The overall all trend of temperature is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of temperature almost follow the model: temperature=0.018*year-35.5. The R square adjusted is 0.73, It means the data follow the model well and every one unit increase in year will also increase 0.018 towards the intercept when predicting the temperature.
 
@@ -166,12 +168,14 @@ comment
 CO2_Year_Mod = World_data %>% mutate(Year = as.numeric(Year) ) %>% 
   lm(CO2emission/1000 ~ Year, data = .)
 
-
-World_data %>% mutate(Year = as.numeric(Year) ) %>% ggplot(aes(Year, CO2emission/1000)) +
-  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
+World_data %>% mutate(Year = as.numeric(Year)) %>% ggplot(aes(Year, CO2emission/1000)) +
+  geom_point() + stat_poly_line(se = FALSE) + 
+  stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC'))) + 
+  labs(title = 'CO2 Emission over Time', y = 'CO2 Emission/1000',
+       caption = 'CO2 Emission has been divided by 1000')
 
 broom::tidy(CO2_Year_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3)))
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
 ```
 The is the plot between the CO2 emission and years from 1990 to 2016. The unit of CO2 is labeled in 1000 MtCO₂e. As we can see, the change in CO2 emission  has been fluctuating between these 26 years, but the trend is clear. The overall all trend is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of CO2 emission almost follow the model: CO2 emission=0.546*year-1064.614. The R square adjusted is 0.96, It means the data is highly correlated with years and every one unit increase in year will also increase 0.546 towards the intercept when predicting the CO2 emission.
 
@@ -186,12 +190,14 @@ These two plot shows whether time series appears in this data. The autocorrelati
 ```{r}
 Temp_CO2_Mod = World_data %>% lm(temperature ~ log(CO2emission), data = .) %>% summary()
 
+World_data %>% ggplot(aes(log(CO2emission), temperature)) + geom_point() + 
+  stat_poly_line(se = FALSE) + 
+  stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC'))) +
+  labs(title = 'Temperature by the Logarithm of CO2 Emission', y = 'Temperature',
+       x = 'Logarithm of CO2 Emission')
+
 broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
-
-
-World_data %>% ggplot(aes(log(CO2emission), temperature)) + geom_point() + 
-  stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
 The is the plot between the CO2 emission and temperature from 1990 to 2016. We are interesting to find the relationship between CO2 emission and temperature. As we can see, the change in temperature is increasing when the CO2 emission is also increasing from 22500 to around 26000. Then the temperature does not change as the CO2 emission continue increase. When the CO2 emission is around 31000, the temperature increase as the CO2 emission increase again. The overall all trend is there's a positive correlation between temperature and CO2 emission, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of these two variables almost follow the model: temperature=0.893*log(CO2 emission)-8.586. The R square adjusted is 0.68, It means 68% of the data can be explain by our model and and every one unit increase in log(CO2emission) will also increase 0.893 towards the intercept when predicting the temperature.
 
@@ -202,42 +208,45 @@ transform_World_data = World_data %>% mutate(forest_area = log(forest_area), pop
                                          Gas = log(Gas), Oil = log(Oil),  Coal = log(Coal), 
                                          CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
 
-mult_full_model = lm(temperature ~ ., data = transform_World_data) %>% summary()
+mult_full_model = lm(temperature ~ ., data = transform_World_data)
 broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
 
 step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
                          log(Coal) + log(CO2emission), data = World_data), direction = 'both')
 
-final_mod = lm(temperature ~ log(Coal) + log(CO2emission), data = World_data) %>% summary()
+final_mod = lm(temperature ~ log(Coal) + log(CO2emission), data = World_data)
 broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
 
-vif(final_mod)
+vif(final_mod) #不显示直接写数字可能更好 不太好做表
 
 temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission), 
     data = World_data))
-plot(World_data$temperature,temp.res,xlab = "temperature",ylab = "Residual")
+cbind(World_data, temp.res) %>% ggplot(aes(temperature, temp.res)) + geom_point() +
+  labs(title = 'Residuals Plot', x = 'Temperature', y = 'Residual')
 
-predict_model<-(-5.154e-05*Coal+1.217e-04*CO2emission-1.157e+00)
+predict_model<-(-5.154e-05*World_data$Coal+1.217e-04*World_data$CO2emission-1.157e+00)
 plot(density(predict_model),lwd = 5, col = "Green",main = "Density between Obsearvation and Predicted Model")
 lines(density(World_data$temperature), lwd = 2)
 ```
 
 5.ridge regression
 ```{r}
-transform_World_data = World_data %>% mutate(population = log(population), Gas = log(Gas), Oil = log(Oil),
-                      Coal = log(Coal), CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
 x = as.matrix(transform_World_data[,1:6])
 y = as.matrix(transform_World_data[,7])
 
 #glmnet::glmnet(x, y, alpha = 0)
 #plot(MASS::lm.ridge(temperature ~ .,data = transform_World_data, lambda = seq(0, .1, .001)))
 MASS::select(MASS::lm.ridge(temperature ~ .,data = transform_World_data, lambda = seq(0, .1, .001))) 
-ridge::linearRidge(temperature ~ .,data = transform_World_data, lambda = 0.1 ) %>% summary()
-a = ridge::linearRidge(temperature ~ .,data = transform_World_data, lambda = 0.1)
+ridge_mod = ridge::linearRidge(temperature ~ .,data = transform_World_data, lambda = 0.1)
 
-predicted = as.matrix(cbind(rep(1, 27),transform_World_data[,1:6])) %*% coef(a)
+cbind(tibble(term = c('(Intercept)', 'Forest Area', 'Population', 'Gas','Oil','Coal',
+                     'CO2 Emission')),as.tibble(summary(ridge_mod)$summaries$summary1$coefficients)) %>%
+  rename(., p.value = `Pr(>|t|)`) %>% select(term, Estimate, p.value) %>% 
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+
+predicted = as.matrix(cbind(rep(1, 27),transform_World_data[,1:6])) %*% coef(ridge_mod)
 cbind(transform_World_data, predicted) %>% ggplot() + geom_point(aes(temperature, predicted))
 (Rsquare = sum((predicted - mean(y))^2)/sum((y - mean(y))^2))
 
