@@ -242,7 +242,11 @@ step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
 lm(formula = temperature ~ log(Coal) + log(CO2emission), data = World_data)%>%summary()
 ```
 
+
 5.ridge regression
+As we state before, there are multicollinearity problem appear in the multiple linear regression, which will have the problem of over fitting when predicting the response variable. In order to make our estimation more accurate. We apply the ridge regression to reduce the influence of multicollinearity.Ridge regression, however, make a trade-off between bias and variance in prediction. By introducing a relatively small bias, we expect a large reduction in the variance, and thus in the mean-squared error.
+
+As λ grows larger, the coefficients (as well as prediction variances) decrease, while the bias increases. Thus we have to select a λ to make a trade-off, so as to control the overall prediction error. 
 ```{r}
 transform_World_data = World_data %>% mutate(population = log(population), Gas = log(Gas), Oil = log(Oil),
                       Coal = log(Coal), CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
@@ -263,6 +267,7 @@ transform_World_data %>% cbind(predicted) %>% mutate(Index = 1:27) %>%
   ggplot() + geom_smooth(aes(Index, temperature), color = 'blue', se = FALSE) + 
   geom_smooth(aes(Index, predicted), color = 'red', se = FALSE)
 ```
+
 
 
 
