@@ -226,6 +226,25 @@ The is the plot between the CO2 emission and temperature from 1990 to 2016. We a
 
 4.multi
 ```{r}
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+World_data %>% select(-Country_Name, -Year) %>% 
+  rename(., Forest = forest_area, Pop = population, CO2 = CO2emission, Temp = temperature) %>% cor() %>%
+  corrplot::corrplot(method = 'square', type = 'upper', diag = FALSE, tl.col = 'Black', tl.srt = 45,
+                     tl.cex = .9,order = 'hclust', addCoef.col = "black", col = col(10000))
+grid.text('The Correlation between Variables', .3 , .1)
+```
+
+
+```{r}
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(M, method="color", col=col(200),  
+         type="upper", order="hclust", 
+         addCoef.col = "black", #添加相关系数
+         tl.col="black", tl.srt=45, #修改字体
+         p.mat = p.mat, sig.level = 0.01, insig = "blank", #显著性筛选
+         diag=FALSE 
+         )
+
 transform_World_data = World_data %>% mutate(forest_area = log(forest_area), population = log(population), 
                                          Gas = log(Gas), Oil = log(Oil),  Coal = log(Coal), 
                                          CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
