@@ -10,7 +10,16 @@ Talk about the background of temperature change, Natural causes and human causes
 Maybe we need to make some graph to prove natural causes is negligible
 ---
 ```{r}
+library(tidyverse)
+library(tmap)
+library(sf)
+library(spiralize)
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
+Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = FALSE)
+```
+
+
+```{r}
 Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = FALSE)
 TemChange_Cont = source %>%
   select(Area, `Area Code (M49)`, Months, Element, 
