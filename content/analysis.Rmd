@@ -24,7 +24,7 @@ library(patchwork)
 library(tmap)
 library(sf)
 library(spiralize)
-
+library()
 
 source(
   here::here("static", "load_and_clean_data.R"),
@@ -139,24 +139,27 @@ broom::tidy(Temp_Year_Mod) %>% select(term, estimate, p.value) %>%
   mutate(across(where(is.numeric), ~round(., 3)))
 
 World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% ggplot(aes(Year, temperature)) +
-  geom_point() + stat_poly_line() + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
+  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
 comment
 2.CO2 & Year
 ```{r}
-World_data %>% 
-  ggplot(aes(y = CO2emission, x = as.numeric(Year))) + geom_smooth(se = FALSE) +
-  labs(y="World CO2 Emission", x = 'Year')
 CO2_Year_Mod = World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% 
   lm(CO2emission ~ Year, data = .)
 broom::tidy(CO2_Year_Mod) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3)))
+
+World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% ggplot(aes(Year, CO2emission)) +
+  geom_point() + stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
 3.TEM&CO2
 ```{r}
 Temp_CO2_Mod = World_data %>% lm(temperature ~ log(CO2emission), data = .) %>% summary()
 broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3)))
+
+World_data %>% ggplot(aes(CO2emission, temperature)) + geom_point() + 
+  stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
 
 
