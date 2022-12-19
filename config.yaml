@@ -59,6 +59,9 @@ menu:
     - name: Data
       url: /data/
       weight: 2
+    - name: Interactive Page
+      url: https://415climatechange.shinyapps.io/apps/
+      weight: 7
 
 params:      
   description: Template and directions for the MA[46]15 final project.
