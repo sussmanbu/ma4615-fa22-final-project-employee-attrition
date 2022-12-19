@@ -156,11 +156,55 @@ World_data %>% mutate(Year = as.numeric(Year) - 1989) %>% ggplot(aes(Year, CO2em
 ```{r}
 Temp_CO2_Mod = World_data %>% lm(temperature ~ log(CO2emission), data = .) %>% summary()
 broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3)))
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
 
-World_data %>% ggplot(aes(CO2emission, temperature)) + geom_point() + 
+World_data %>% ggplot(aes(log(CO2emission), temperature)) + geom_point() + 
   stat_poly_line(se = FALSE) + stat_poly_eq(mapping = use_label(c('eq', 'adj.R2', 'p', 'AIC')))
 ```
+
+4.multi
+```{r}
+trans_World_data = World_data %>% mutate(Year = as.numeric(Year)-1989, forest_area = log(forest_area), 
+                      population = log(population), Gas = log(Gas), Oil = log(Oil), 
+                      Coal = log(Coal), CO2emission = log(CO2emission)) %>% select(-Country_Name)
+lm(temperature ~ ., data = trans_World_data) %>% summary()
+x <- model.matrix(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) + 
+                    log(Coal) + log(CO2emission), data = World_data)
+y <- World_data$temperature
+fit <- glmnet::glmnet(x, y, alpha = 1)
+autoplot(fit, cex = 1.5)
+
+lm(temperature ~ log(forest_area) + log(Oil) + log(population), data = World_data) %>%
+  summary()
+
+
+step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
+                         log(Coal) + log(CO2emission), data = World_data), direction = 'both')
+lm(formula = temperature ~ log(Coal) + log(CO2emission), data = World_data)%>%summary()
+```
+
+5.ridge regression
+```{r}
+transform_World_data = World_data %>% mutate(population = log(population), Gas = log(Gas), Oil = log(Oil),
+                      Coal = log(Coal), CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
+x = as.matrix(transform_World_data[,1:6])
+y = as.matrix(transform_World_data[,7])
+
+#glmnet::glmnet(x, y, alpha = 0)
+#plot(MASS::lm.ridge(temperature ~ .,data = transform_World_data, lambda = seq(0, .1, .001)))
+MASS::select(MASS::lm.ridge(temperature ~ .,data = transform_World_data, lambda = seq(0, .1, .001))) 
+ridge::linearRidge(temperature ~ .,data = transform_World_data, lambda = 0.1 ) %>% summary()
+a = ridge::linearRidge(temperature ~ .,data = transform_World_data, lambda = 0.1)
+
+predicted = as.matrix(cbind(rep(1, 27),transform_World_data[,1:6])) %*% coef(a)
+cbind(transform_World_data, predicted) %>% ggplot() + geom_point(aes(temperature, predicted))
+(Rsquare = sum((predicted - mean(y))^2)/sum((y - mean(y))^2))
+
+transform_World_data %>% cbind(predicted) %>% mutate(Index = 1:27) %>% 
+  ggplot() + geom_smooth(aes(Index, temperature), color = 'blue', se = FALSE) + 
+  geom_smooth(aes(Index, predicted), color = 'red', se = FALSE)
+```
+
 
 
 -------
