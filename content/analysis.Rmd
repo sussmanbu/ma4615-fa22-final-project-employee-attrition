@@ -44,6 +44,16 @@ World_data %>%
   ggplot(aes(x=CO2emission,y=temperature))+geom_point()+
   labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
 (summary(lm(temperature~CO2emission,data=World_data)))
+acf(World_data$CO2emission)
+pacf(World_data$CO2emission)
+
+World_data %>% 
+  ggplot(aes(x=log(CO2emission),y=temperature))+geom_point()+
+  labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
+
+World_data %>% 
+  ggplot(aes(y=temperature,x=(CO2emission-lag(temperature))/lag(CO2emission)))+geom_point()+
+  labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
 ```
 
 ## Visualization:
