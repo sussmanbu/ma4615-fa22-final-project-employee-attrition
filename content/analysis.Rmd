@@ -146,14 +146,22 @@ diag %>% ggplot(aes(y_hat, std_res)) +
 ```{r}
 all_developed = c("Switzerland","Norway","Iceland","Hong Kong","Australia","Denmark","Sweden","Ireland","Germany","Netherlands","Finland","Singapore","Belgium","New Zealand","Canada","Liechtenstein","Luxembourg","United Kingdom","Japan","South Korea","United States","Israel","Malta","Slovenia","Austria","United Arab Emirates","Spain","France","Cyprus","Italy","Estonia","Czechia","Greece","Poland","Bahrain","Lithuania","Saudi Arabia","Portugal","Latvia","Andorra","Croatia","Chile","Qatar","San","Slovakia","Hungary","Argentina","Turkey","Montenegro","Kuwait","Brunei","Russia","Romania","Oman","Bahamas","Kazakhstan","Trinidad and Tobago","Costa Rica","Uruguay","Belarus","Panama","Malaysia","Georgia","Mauritius","Serbia","Thailand")
 
-CO2_clean_1 %>% filter(!Country %in% c('World','European Union (27)')) %>% mutate(developed = ifelse(Country %in% all_developed, 'Developed', 'Developing')) %>% filter(CO2emission != 0) %>% group_by(Country) %>% 
+CO2_clean_1 %>% filter(!Country %in% c('World','European Union (27)')) %>% mutate(developed = ifelse(Country %in% all_developed, 'Developed', 'Developing')) %>% group_by(Country) %>% 
   transmute(meanCO2 = mean(CO2emission,rm.na = TRUE), developed = developed) %>%
   distinct(Country, meanCO2, developed) %>%
-  ggplot(aes(developed, meanCO2,color = developed)) + geom_boxplot() + ylim(0,100) +
+  ggplot(aes(developed, meanCO2,color = developed)) + geom_boxplot() + ylim(-10,100) +
   geom_jitter(shape=16, position=position_jitter(0.2), alpha = .4) + 
-  labs(title = 'Mean Emission of CO2 form 1990-2018', x = 'Development Phase',
+  labs(title = 'Mean Emission of CO2 Form 1990-2018', x = 'Development Phase',
        y = 'Mean Emission of CO2')
 
+TemChange_Year %>% mutate(developed = ifelse(Area %in% all_developed, 'Developed', 'Developing')) %>%
+  filter(year %in% 1990:2018) %>% group_by(Area) %>% 
+  transmute(meanTempChange = mean(change,rm.na = TRUE), developed = developed) %>%
+  distinct(Area, meanTempChange, developed) %>%
+  ggplot(aes(developed, meanTempChange, color = developed)) + geom_boxplot() +
+  geom_jitter(shape=16, position=position_jitter(0.2), alpha = .4) + 
+  labs(title = 'Mean Temperature Change Form 1990-2018', x = 'Development Phase',
+       y = 'Mean Temperature Change')
 ```
 
 
@@ -220,6 +228,25 @@ The is the plot between the CO2 emission and temperature from 1990 to 2016. We a
 
 4.multi
 ```{r}
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+World_data %>% select(-Country_Name, -Year) %>% 
+  rename(., Forest = forest_area, Pop = population, CO2 = CO2emission, Temp = temperature) %>% cor() %>%
+  corrplot::corrplot(method = 'square', type = 'upper', diag = FALSE, tl.col = 'Black', tl.srt = 45,
+                     tl.cex = .9,order = 'hclust', addCoef.col = "black", col = col(10000))
+grid.text('The Correlation between Variables', .3 , .1)
+```
+
+
+```{r}
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(M, method="color", col=col(200),  
+         type="upper", order="hclust", 
+         addCoef.col = "black", #添加相关系数
+         tl.col="black", tl.srt=45, #修改字体
+         p.mat = p.mat, sig.level = 0.01, insig = "blank", #显著性筛选
+         diag=FALSE 
+         )
+
 transform_World_data = World_data %>% mutate(forest_area = log(forest_area), population = log(population), 
                                          Gas = log(Gas), Oil = log(Oil),  Coal = log(Coal), 
                                          CO2emission = log(CO2emission)) %>% select(-Country_Name, -Year)
