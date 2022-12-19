@@ -228,9 +228,10 @@ The is the plot between the CO2 emission and temperature from 1990 to 2016. We a
 ```{r}
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 World_data %>% select(-Country_Name, -Year) %>% 
-  rename(., Forest = forest_area, Pop = population, CO2 = CO2emission, Temp = temperature) %>% cor() %>%
+  rename(., Forest = forest_area, Pop = population, CO2 = CO2emission, Temp = temperature) %>% 
+  select(Temp, everything()) %>% cor() %>%
   corrplot::corrplot(method = 'square', type = 'upper', diag = FALSE, tl.col = 'Black', tl.srt = 45,
-                     tl.cex = .9,order = 'hclust', addCoef.col = "black", col = col(10000))
+                     tl.cex = .9 ,addCoef.col = "black", col = col(10000))
 grid.text('The Correlation between Variables', .3 , .1)
 ```
 
