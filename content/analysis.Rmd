@@ -141,6 +141,20 @@ diag %>% ggplot(aes(y_hat, std_res)) +
        title = 'Checking for Constant Variance')
 ```
 
+```{r}
+all_developed = c("Switzerland","Norway","Iceland","Hong Kong","Australia","Denmark","Sweden","Ireland","Germany","Netherlands","Finland","Singapore","Belgium","New Zealand","Canada","Liechtenstein","Luxembourg","United Kingdom","Japan","South Korea","United States","Israel","Malta","Slovenia","Austria","United Arab Emirates","Spain","France","Cyprus","Italy","Estonia","Czechia","Greece","Poland","Bahrain","Lithuania","Saudi Arabia","Portugal","Latvia","Andorra","Croatia","Chile","Qatar","San","Slovakia","Hungary","Argentina","Turkey","Montenegro","Kuwait","Brunei","Russia","Romania","Oman","Bahamas","Kazakhstan","Trinidad and Tobago","Costa Rica","Uruguay","Belarus","Panama","Malaysia","Georgia","Mauritius","Serbia","Thailand")
+
+CO2_clean_1 %>% filter(!Country %in% c('World','European Union (27)')) %>% mutate(developed = ifelse(Country %in% all_developed, 'Developed', 'Developing')) %>% filter(CO2emission != 0) %>% group_by(Country) %>% 
+  transmute(meanCO2 = mean(CO2emission,rm.na = TRUE), developed = developed) %>%
+  distinct(Country, meanCO2, developed) %>%
+  ggplot(aes(developed, meanCO2,color = developed)) + geom_boxplot() + ylim(0,100) +
+  geom_jitter(shape=16, position=position_jitter(0.2), alpha = .4) + 
+  labs(title = 'Mean Emission of CO2 form 1990-2018', x = 'Development Phase',
+       y = 'Mean Emission of CO2')
+
+```
+
+
 Start at here
 ## Motivation:
 In order to get the relationship between year and temperature, we firstly draw the figure of temperature and CO2emission with yeas individually, then we draw the plow between temperature and CO2emission to find whether or not there is a correlation between them.
