@@ -258,6 +258,7 @@ The is the plot between the CO2 emission and temperature from 1990 to 2016. We a
 
 
 4.multiple linear regression
+Since the correlation between CO2 emission and temperature is not that linear, we think there might be other parameters also have correlation with temperature. We draw a correlation matrix to explore the relationship between each parameters to determine which parameter can also been included into our model to predict the response variable.
 ```{r}
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 World_data %>% select(-Country_Name, -Year) %>% 
@@ -267,7 +268,7 @@ World_data %>% select(-Country_Name, -Year) %>%
                      tl.cex = .9 ,addCoef.col = "black", col = col(10000))
 grid.text('The Correlation between Variables', .3 , .1)
 ```
-
+This is the correlation matrix between each parameter, as we can see temperature have a strong negative correlation with forest area, except forest area, temperature have a positive relationship with all the other parameters. Since all the parameter has a high correlation with temperature, we decided to put all the parameters in a linear model to predict the trend of temperature.
 
 ```{r}
 transform_World_data = World_data %>% mutate(forest_area = log(forest_area), population = log(population), 
@@ -277,26 +278,33 @@ transform_World_data = World_data %>% mutate(forest_area = log(forest_area), pop
 mult_full_model = lm(temperature ~ ., data = transform_World_data)
 broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+```
+The is the output of the linear model between the forest_area, population, Gas, Oil, Coal, CO2 emission, and temperature. The hypothesis of this linear model is all the parameters are not significant when predicting temperature. The p-values we get for forest area, population, Gas, oil, and CO2 emission are all above 0.05, most parameters are not significant indicates the model is not suitable to use as a prediction of temperature. In order to select the most accurate parameter in the model, we use backward step wise model selection.
 
+```{r}
 step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
                          log(Coal) + log(CO2emission), data = World_data), direction = 'both')
 
 final_mod = lm(temperature ~ log(Coal) + log(CO2emission), data = World_data)
-broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
+broom::tidy(final_mod) %>% select(term, estimate, p.value) %>% 
   mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+```
+Before we use the step wise model selection, we apply log transformation on all the parameter to make the trend of each parameter more normally distributed. This is the output from the model selection:  temperature=3.095*log(CO2 emission)-1.503*log(Coal)-15.503. This relationship means every one unit increase in log(CO2emission) will increase by 3.095 towards the intercept when predicting the temperature. However, every one unit increase in log(CO2emission) will decrease by 1.503 towards the intercept when predicting the temperature. The R square is 0.8 for this model, which means 80% of the data can be explained by our model. 
 
-vif(final_mod) #不显示直接写数字可能更好 不太好做表
-
+```{r}
 temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission), 
     data = World_data))
 cbind(World_data, temp.res) %>% ggplot(aes(temperature, temp.res)) + geom_point() +
   labs(title = 'Residuals Plot', x = 'Temperature', y = 'Residual')
+```
+We want to test how well our model perform in the prediction of temperature. We draw the residual plot of the model, from this plot we can see that the residual is not normally distributed, there's no point in the lower right corner, it seems to have it's own trend. This means our model does not fit the trend of change in temperature.
 
+```{r}
 predict_model<-(-5.154e-05*World_data$Coal+1.217e-04*World_data$CO2emission-1.157e+00)
-plot(density(predict_model),lwd = 5, col = "Green",main = "Density between Obsearvation and Predicted Model")
+plot(density(predict_model),lwd = 5, col = "Green",main = "Density between Obsearvation and Predicted Model of Temp")
 lines(density(World_data$temperature), lwd = 2)
 ```
-
+We also draw a density plot between observation and predicted model. The green line in the plot is our predicted model by plug in number into our model. The black line is the density line of observation. It is clear that most our predicted model follow the observation, but around 0.4, our predicted model have it's own trend. As the R square shows it's a good model, but the visualization plot of residual does not state it is fit. We came up with a question, whether multicollinearity problem appear in the multiple linear regression. We use VIF to test the correlation between explanatory variable. The output is 45 for both parameter. In general if VIF is larger than 10 there is a strong correlation between explanatory variables, which will cause over fitting towards the model. This is why our R square is high but the residual plot does not show a well goodness of fit.
 
 5.ridge regression
 As we state before, there are multicollinearity problem appear in the multiple linear regression, which will have the problem of over fitting when predicting the response variable. In order to make our estimation more accurate. We apply the ridge regression to reduce the influence of multicollinearity.Ridge regression, however, make a trade-off between bias and variance in prediction. By introducing a relatively small bias, we expect a large reduction in the variance, and thus in the mean-squared error.
