@@ -18,38 +18,46 @@ ui <- fluidPage(
   # Application title
   titlePanel("CO2 Emissions"),
   
-  #  Sidebar panel for input
-  sidebarPanel(
-    # User inputs year to query from
-    selectInput(
-      inputId = "year",
-      label = "From which year:",
-      choices = df$Year %>% unique()
+  sidebarLayout(
+    # Sidebar panel for input
+    sidebarPanel(
+      # User inputs year to query from
+      selectInput(
+        inputId = "year",
+        label = "From which year:",
+        choices = df$Year %>% unique()
+      ),
+      
+      # User inputs country to query from
+      selectInput(
+        inputId = "country",
+        selected = "World",
+        label = "Which country are you interested in:",
+        choices = df$Country%>% unique(),
+        multiple = TRUE
+      ),
     ),
     
-    # User inputs country to query from
-    selectInput(
-      inputId = "country",
-      selected = "World",
-      label = "Which country are you are interested:",
-      choices = df$Country%>% unique(),
-      multiple = TRUE
-    ),
-    
-    # User inputs year that map should query from
-    sliderInput(
-      inputId = 'mapYear', 
-      label = 'Year', 
-      min = 1990, 
-      max = 2018, 
-      value = c(2000)
+    mainPanel(
+      plotOutput(outputId = "scatter"),
     )
   ),
   
-  
-  mainPanel(
-    plotOutput(outputId = "scatter"),
-    leafletOutput(outputId = "map")
+  sidebarLayout(
+    sidebarPanel(
+      # User inputs year that map should query from
+      sliderInput(
+        inputId = 'mapYear', 
+        label = 'What year should the map display?', 
+        min = 1990, 
+        max = 2018, 
+        value = c(2000)
+      )
+    ),
+    
+    mainPanel(
+      leafletOutput(outputId = "map")
+    )
   )
 )
 
@@ -81,7 +89,16 @@ server <- function(input, output) {
       addTiles() %>%
       setView(lng = -95.7, lat = 37, zoom = 2) %>%
       addCircleMarkers(data = map_df(), radius = ~sqrt(CO2emission))
+    
   })
+  
+  sliderInput(
+    inputId = 'mapYear', 
+    label = 'Year', 
+    min = 1990, 
+    max = 2018, 
+    value = c(2000)
+  )
   
 }
 
