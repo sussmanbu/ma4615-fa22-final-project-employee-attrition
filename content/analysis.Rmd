@@ -13,9 +13,6 @@ We describe here our detailed data analysis.
 
 [second analysis page](/analysis2/)
 
-## Motivation:
-
-*Firstly, We want to know what factors affect and have relationships with the temperature. We want to test various variables such as “Year”, “Regions”, “CO2 emission”, “Coal”, “Gas”, “population”, “forest area”, and “Oil”. We are interested in answering whether those variables will lead to changes in the temperature and assume that these variables can affect or are related to temperature. We also want to compare these relationships and know which variable among those actually affects temperature most. Finally, we are wondering if our conclusions are valid and correct. 
 
 ```{r,warning=FALSE,message=FALSE,echo=FALSE}
 library(tidyverse)
@@ -62,7 +59,7 @@ We also plot the mean temperature change between these two categories, however, 
 ## Modeling:
 In the previous paragraph, we simply analysis the data by dividing them into two categories, developed countries, and developing countries. The plot also confirms our conjecture, we then want to check whether this correlation is the same as before when analysis the data as a whole. Before directly apply a linear model on CO2 emission and temperature, we first want to visualize the trend of the temperature and CO2 emission separately by years. In order to get the relationship between year and temperature, we draw the figure of temperature and CO2emission with yeas individually, then we draw the plow between temperature and CO2emission to find whether or not there is a correlation between them.
 
-###1.TEM vs Year
+### 1.TEM vs Year
 ```{r}
 Temp_Year_Mod = World_data %>% mutate(Year = as.numeric(Year)) %>% 
   lm(temperature ~ Year, data = .)
@@ -79,7 +76,7 @@ broom::tidy(Temp_Year_Mod) %>% select(term, estimate, p.value) %>%
 The is the plot between the temperature and years from 1990 to 2016. The temperature is not labeled in actual temperature in  Celsius, instead it is measured in the difference between that year and the average temperature in 20th Century. As we can see, the change in temperature  has been fluctuating between these 26 years. The overall all trend of temperature is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of temperature almost follow the model: temperature=0.018*year-35.5. The R square adjusted is 0.73, It means the data follow the model well and every one unit increase in year will also increase 0.018 towards the intercept when predicting the temperature.
 
 
-###2.CO2 vs Year
+### 2.CO2 vs Year
 ```{r}
 CO2_Year_Mod = World_data %>% mutate(Year = as.numeric(Year) ) %>% 
   lm(CO2emission/1000 ~ Year, data = .)
@@ -102,7 +99,7 @@ pacf(World_data$CO2emission, main="")
 These two plot shows whether time series appears in this data. The autocorrelation plot is a geometric plot, the partial autocorrelation plot has one significant abnormal point, which indicates the CO2 emission follows a AR(1) model, and the CO2 emission of a certain year is highly correlated with the previous year's data. 
 
 
-###3.TEM vs CO2
+### 3.TEM vs CO2
 ```{r}
 Temp_CO2_Mod = World_data %>% lm(temperature ~ log(CO2emission), data = .) %>% summary()
 
@@ -118,7 +115,7 @@ broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>%
 The is the plot between the CO2 emission and temperature from 1990 to 2016. We are interesting to find the relationship between CO2 emission and temperature. As we can see, the change in temperature is increasing when the CO2 emission is also increasing from 22500 to around 26000. Then the temperature does not change as the CO2 emission continue increase. When the CO2 emission is around 31000, the temperature increase as the CO2 emission increase again. The overall all trend is there's a positive correlation between temperature and CO2 emission, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of these two variables almost follow the model: temperature=0.893*log(CO2 emission)-8.586. The R square adjusted is 0.68, It means 68% of the data can be explain by our model and and every one unit increase in log(CO2emission) will also increase 0.893 towards the intercept when predicting the temperature.
 
 
-4.multiple linear regression
+### 4.multiple linear regression
 Since the correlation between CO2 emission and temperature is not that linear, we think there might be other parameters also have correlation with temperature. We draw a correlation matrix to explore the relationship between each parameters to determine which parameter can also been included into our model to predict the response variable.
 ```{r}
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
@@ -167,7 +164,7 @@ lines(density(World_data$temperature), lwd = 2)
 ```
 We also draw a density plot between observation and predicted model. The green line in the plot is our predicted model by plug in number into our model. The black line is the density line of observation. It is clear that most our predicted model follow the observation, but around 0.4, our predicted model have it's own trend. As the R square shows it's a good model, but the visualization plot of residual does not state it is fit. We came up with a question, whether multicollinearity problem appear in the multiple linear regression. We use VIF to test the correlation between explanatory variable. The output is 45 for both parameter. In general if VIF is larger than 10 there is a strong correlation between explanatory variables, which will cause over fitting towards the model. This is why our R square is high but the residual plot does not show a well goodness of fit.
 
-5.ridge regression
+### 5.ridge regression
 As we state before, there are multicollinearity problem appear in the multiple linear regression, which will have the problem of over fitting when predicting the response variable. In order to make our estimation more accurate. We apply the ridge regression to reduce the influence of multicollinearity.Ridge regression, however, make a trade-off between bias and variance in prediction. By introducing a relatively small bias, we expect a large reduction in the variance, and thus in the mean-squared error.
 
 As λ grows larger, the coefficients (as well as prediction variances) decrease, while the bias increases. Thus we have to select a λ to make a trade-off, so as to control the overall prediction error. 
@@ -205,6 +202,8 @@ transform_World_data %>% cbind(predicted) %>% mutate(Index = 1990:2016) %>%
 ```
 Another way to test the goodness of fit of our model is draw the model and observation data together. In this plot, the blue line is the observation data, and the red line is our predicted model. Over all our model fit the trend of the observation well, although the original data is not as linear as we predicted, our model fit the trend of the temperature well. 
 
+### Conclusion
+Our final model to predict temperature is using ridge regression, our final model shows "Forest area", "Population", "Gas", "Oil", and "CO2emission" all have influence on predicting change in temperature. However, our analysis have some limitation. Firstly, our data only has the data from 1990 to 2016, more data is operable when construct the model and predict the response variable. Also, most our variable more or less have correlation with CO2 emission. The problem of over fitting will appear when doing the prediction, the further analysis can include some parameters that has no relationship with CO2 emission, and the conclusion will be more accurate.
 
 
 -------
