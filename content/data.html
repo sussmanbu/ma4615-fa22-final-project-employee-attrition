@@ -18,15 +18,16 @@ draft: false
 <h2>Data Link:</h2>
 <p>world Temperature: <a href="https://datahub.io/core/global-temp#data" class="uri">https://datahub.io/core/global-temp#data</a></p>
 <p>world CO2 emission: <a href="https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world" class="uri">https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world</a></p>
-<p>Global fossil fuel consumption: <a href="https://datahub.io/core/global-temp#data" class="uri">https://datahub.io/core/global-temp#data</a></p>
+<p>Global fossil fuel consumption: <a href="https://ourworldindata.org/fossil-fuels" class="uri">https://ourworldindata.org/fossil-fuels</a></p>
 <p>Forest area: <a href="https://data.worldbank.org/indicator/AG.LND.FRST.ZS" class="uri">https://data.worldbank.org/indicator/AG.LND.FRST.ZS</a></p>
 <p>Population: <a href="https://data.worldbank.org/indicator/SP.POP.TOTL" class="uri">https://data.worldbank.org/indicator/SP.POP.TOTL</a></p>
+<p>One of our data is from kaggle, the data is gathered from the Climate Watch Data portal using CAIT data source. This data was collected because CO2 emission plays a major role in climate change. Our other data mostly come from world bank, this is a organization that collect data from different sources， and shares data to people all over the world. These data was collected by this organization might because these data are highly correlated with climate change, and climate change is a topic that everyone cares.</p>
 <hr />
 </div>
 <div id="variable" class="section level2">
 <h2>Variable:</h2>
 <ul>
-<li><p>Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two datasets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available timeseries of global-scale temperature anomalies are calculated with respect to the 20th century average.</p></li>
+<li><p>Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two data sets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available time series of global-scale temperature anomalies are calculated with respect to the 20th century average.</p></li>
 <li><p>CO2 emission: Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the unit is MtCO₂e</p></li>
 <li><p>Gas: Global primary energy consumption by gas, measured in terawatt-hours (TWh).</p></li>
 <li><p>Oil: Global primary energy consumption by oil, measured in terawatt-hours (TWh).</p></li>
@@ -64,38 +65,8 @@ draft: false
 </div>
 <div id="whold-data" class="section level3">
 <h3>Whold data</h3>
-<p>After we clean each individual data, we use a inner_join to combine the new data into the previous one. Finally we came up with a complete data called “World_data”. However in this data we find that in previous join there shows up two column which both represent the name of country. We use select and change the name of some columns to make the data clear and easy to understand.</p>
+<p>After we clean each individual data, we use a inner_join to combine the new data into the previous one. Finally we came up with a complete data called “World_data”. This data include all the previous data from 1990 to 2016, it both include the world data, and the data for individual countries. However in this data we find that in previous join there shows up two column which both represent the name of country. We use select and change the name of some columns to make the data clear and easy to understand.</p>
 <hr />
-<pre class="r"><code>source(
-  here::here(&quot;static&quot;, &quot;load_and_clean_data.R&quot;),
-  echo = FALSE
-  
-)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
-## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
-## ✔ readr   2.1.2      ✔ forcats 0.5.2 
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## Rows: 195 Columns: 34
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr  (6): Country, Data source, Sector, Gas, Unit, 1990
-## dbl (28): 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, ...
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-## New names:
-## Rows: 274 Columns: 4
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (1): Source
-## dbl (3): ...1, Year, Mean
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>CO2_clean&lt;-CO2_emissions %&gt;% select(Country,34:6)
 CO2_clean$`1990`&lt;-as.double(CO2_clean$`1990`)
 CO2_clean_1 &lt;- CO2_clean %&gt;% 
@@ -114,8 +85,8 @@ fossil_fuel&lt;-fossil_fuel %&gt;% select(Year:Coal)
 fossil_fuel$Year&lt;-as.character(fossil_fuel$Year)
 World_data&lt;-fossil_fuel %&gt;% inner_join(World_data)
 
-world_pop&lt;-population %&gt;% filter(`Country Name`==&quot;World&quot;) %&gt;% 
-  select(`Country Name`,&quot;1960&quot;:&quot;2021&quot;) %&gt;% 
+world_pop&lt;-population %&gt;% filter(`Country Name`==&quot;World&quot;) %&gt;% select(`Country Name`,&quot;1960&quot;:&quot;2021&quot;) %&gt;% 
+
   pivot_longer(cols = c(&quot;1960&quot;:&quot;2021&quot;),names_to = &quot;Year&quot;,values_to = &quot;population&quot;)
 World_data&lt;-world_pop %&gt;% inner_join(World_data)
 
@@ -125,7 +96,9 @@ world_forest_area&lt;-forest_area %&gt;% filter(`Country Name`==&quot;World&quot
 World_data&lt;-world_forest_area %&gt;% inner_join(World_data)
 
 World_data&lt;-World_data %&gt;% select(- Country)
-colnames(World_data)[9]&lt;-&quot;temperature&quot;</code></pre>
+colnames(World_data)[9]&lt;-&quot;temperature&quot;
+colnames(World_data)[1]&lt;-&quot;Country_Name&quot;
+colnames(World_data)[3]&lt;-&quot;forest_area&quot;</code></pre>
 <hr />
 </div>
 </div>

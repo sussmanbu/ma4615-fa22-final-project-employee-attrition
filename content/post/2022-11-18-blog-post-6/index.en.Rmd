@@ -70,7 +70,7 @@ server <- function(input, output) {
       filter(Country %in% input$country & Year >= input$year) %>% 
       ggplot() + 
       labs(x = "Year", y = "CO2 Emission", color = "Country", title = "Progression of CO2 Levels") +
-      geom_line(mapping = aes(x = Year, y = CO2emission, group = Country, colour = as.factor(Country)))
+      geom_line(mapping = aes(x = as.numeric(Year), y = CO2emission, group = Country, colour = as.factor(Country)))
   })
 }
 

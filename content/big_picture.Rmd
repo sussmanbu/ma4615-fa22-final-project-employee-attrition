@@ -21,7 +21,16 @@ Here is the mean temperature chage of each country from 1961 to 2021.
 (Interactive: https://ycwen.shinyapps.io/Temp_Change/)
 ---
 ```{r}
+library(tidyverse)
+library(tmap)
+library(sf)
+library(spiralize)
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
+Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = FALSE)
+```
+
+
+```{r fig.width=8, fig.height=6}
 Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = FALSE)
 TemChange_Cont = source %>%
   select(Area, `Area Code (M49)`, Months, Element, 
@@ -66,7 +75,8 @@ mean_change <- function(x, y){
 }
 
 mean_change(1961,2021) + 
-  tm_layout(main.title = 'Mean of Temperature change from 1961 to 2021')#could use to add other period
+  tm_layout(main.title = 'Mean of Temperature change from 1961 to 2021',
+            legend.text.size = 1, legend.title.size = 1.5, main.title.size = 2)#could use to add other period
 ```
 Only from the color of the map, we see most countries have their temperature changed, and the region in easteren Europe has the most siginificant increase in temperature. The change in temperature can be assumed related to countries policies and their ecomomy type. In countries like Russia, Canada, and some Arabic countries, there economy are heavily based on their fossil resources, which will highly increase their CO2 emission.
 ```{r}
@@ -103,7 +113,7 @@ Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE
   mutate(developed = ifelse(Area %in% Developed, 'Developed', 'Developing')) %>% 
   ggplot(aes(reorder(Area, desc(meanChange)), meanChange)) + 
   geom_bar(aes(fill = developed), stat = 'identity') +
-  labs(title = 'Mean Temperature Change of some Developed and Developing Countries\nfrom 1961-2021',
+  labs(title = 'Mean Temperature Change of some Developed and \nDeveloping Countries From 1961-2021',
        x = 'Country', y = 'Mean temperature Change(°C)') + coord_flip() 
 
 country_level = c('Russia','Canada','China','Brazil','United Kingdom','United States','Australia','South Africa','Japan','India')
