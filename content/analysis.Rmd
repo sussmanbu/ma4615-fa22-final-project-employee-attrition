@@ -50,7 +50,7 @@ TemChange_Year = left_join(TemChange_Year, world_map, c("Area Code (M49)" = 'ISO
   filter(!is.na(TYPE)) %>% select(Area, `Area Code (M49)`, year, change, geometry) %>% st_as_sf()
 ```
 ## Motivation:
-We first divide all the country into developed and developing, we want to check is there any difference in CO2 emission between these two categories.
+Nowadays, CO2 emission plays a major role in global climate change. CO2 emission is highly correlated with transportation, manufacturing, burning of fossil fuel, and other factors. It is obvious that different countries will have a different policy on CO2 emission, and no two countries are the same, our team is interested in finding whether different countries have different CO2 emissions and change differently in temperature. Instead of compare different countries individually, we first divide all the country into developed and developing, we want to check if there is any difference in CO2 emission between these two categories.
 
 ## Visualization:
 ```{r,warning=FALSE,message=FALSE,echo=FALSE}
