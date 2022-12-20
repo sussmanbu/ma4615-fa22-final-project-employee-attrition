@@ -20,7 +20,7 @@ It's not the same with CO2 and other greenhouse gases. Carbon dioxide, for examp
 Here is the mean temperature chage of each country from 1961 to 2021.
 (Interactive: https://ycwen.shinyapps.io/Temp_Change/)
 ---
-```{r}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 library(tidyverse)
 library(tmap)
 library(sf)
@@ -30,7 +30,7 @@ Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = F
 ```
 
 
-```{r fig.width=8, fig.height=6}
+```{r fig.width=8, fig.height=6,warning=FALSE,message=FALSE,echo=FALSE}
 Fao_emission = read_csv(here::here('dataset','emission.csv'), show_col_types = FALSE)
 TemChange_Cont = source %>%
   select(Area, `Area Code (M49)`, Months, Element, 
@@ -79,7 +79,7 @@ mean_change(1961,2021) +
             legend.text.size = 1, legend.title.size = 1.5, main.title.size = 2)#could use to add other period
 ```
 Only from the color of the map, we see most countries have their temperature changed, and the region in easteren Europe has the most siginificant increase in temperature. The change in temperature can be assumed related to countries policies and their ecomomy type. In countries like Russia, Canada, and some Arabic countries, there economy are heavily based on their fossil resources, which will highly increase their CO2 emission.
-```{r}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 TempChange_Ave <- TemChange_Cont %>% as_tibble() %>% select('Y1961':'Y2021') %>%
   colSums(na.rm = TRUE)/223
 TempChange_Ave <- tibble(year = c(1961:2021), TempChange_Ave) 
@@ -99,7 +99,7 @@ spiral_yaxis()
 grid.text('Mean Temperature Change of World (°C)', .5 , 1, )
 ```
 By the graph of the temperature, the global mean temperature change continously increase and at the year 2021, the mean temperature increased over 1 degree and we can predict in near future it will get over 1.5 degree. The trend of the increase of the global mean temperature is also follow the same trend as the increase of the CO2 during this period. 
-```{r}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 #Select 5 developed countries and 5 developing countries WHICH ARE
 #US840, UK826, JAPAN392, AUSTRALIA036, CANADA124
 #CHINA156, RUSSIA643, BRAZIL076, INDIA356, South Africa710
@@ -120,7 +120,7 @@ country_level = c('Russia','Canada','China','Brazil','United Kingdom','United St
 ```
 Compare to developed countries such as Canada, United States, Australia, United Kingdom and Japan, a lot  developing countries have more CO2 emission. The using of natural resources is a key for most developing countries to develop. However, India with a huge population has a comparable lower CO2 emission. As we have discussed in the temperature map, we are expected to see a higher CO2 emission in countries with high temperature increase during these years.
 
-```{r}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 Fao_emission <- Fao_emission %>% select(Area, `Area Code (M49)`, Element, Item, Year, Value) %>%
   mutate(Area = str_replace_all(Area, c('China, mainland' = 'China', 'Russian Federation' = 'Russia',
                                 'United Kingdom of Great Britain and Northern Ireland' = 'United Kingdom',
@@ -133,7 +133,7 @@ Selected %>% filter(year %in% c(2000,2010,2020)) %>% mutate(Area = factor(Area, 
        title = 'Temperature Change of Some Developed and Developing Countries')
 ```
 For most countries (except Canada and Russia), the change in temperature follows a same pattern. During this 20 yeas, these 10 countries most had their temperature increased. This is the plot for CO2 emission of each country from 1990 to 2018(https://ycwen.shinyapps.io/Hist_emis/).
-```{r}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 Selected_emis <- Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Value))
 Selected_emis %>% filter(Element == 'Emissions (CO2)', Year %in% c(2000,2010,2020)) %>%
   mutate(Area = factor(Area, levels = country_level), 
