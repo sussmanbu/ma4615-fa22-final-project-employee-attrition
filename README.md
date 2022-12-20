@@ -2,6 +2,9 @@
 
 **Make sure to read the full README file below, all pages and posts on your initial site, and look through the files in the `content` folder and the `config.toml` file.**
 
+link for the video: https://bostonu.zoom.us/rec/share/rg8aMCFggsOLZ3X9IlJUq3KgeqVkUGw-T6i6k3vi-elARNzpR8pZVeg19AMqYENP.hFfT36hZqyNIwo4N 
+Passcode: H0Hq?Q^p
+
 For your final project, your team will be 
 
 
