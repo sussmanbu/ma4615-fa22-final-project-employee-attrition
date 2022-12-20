@@ -104,7 +104,7 @@ Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE
   mutate(developed = ifelse(Area %in% Developed, 'Developed', 'Developing')) %>% 
   ggplot(aes(reorder(Area, desc(meanChange)), meanChange)) + 
   geom_bar(aes(fill = developed), stat = 'identity') +
-  labs(title = 'Mean Temperature Change of some Developed and Developing Countries\nfrom 1961-2021',
+  labs(title = 'Mean Temperature Change of some Developed and \nDeveloping Countries From 1961-2021',
        x = 'Country', y = 'Mean temperature Change(°C)') + coord_flip() 
 
 country_level = c('Russia','Canada','China','Brazil','United Kingdom','United States','Australia','South Africa','Japan','India')
