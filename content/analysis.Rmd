@@ -20,11 +20,14 @@ library(GGally)
 library(patchwork) 
 library(ggpmisc)
 library(car)
+library(sf)
+library(grid)
 
 source(
   here::here("static", "load_and_clean_data.R"),
   echo = FALSE)
 ```
+<<<<<<< HEAD
 ## Motivation:
 We first divide all the country into developed and developing, we want to check is there any difference in CO2 emission between these two categories.
 
@@ -71,7 +74,8 @@ World_data %>% mutate(Year = as.numeric(Year) ) %>% ggplot(aes(Year, temperature
        caption = 'Compared with the Average Temperature in 20th Century')
 
 broom::tidy(Temp_Year_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the plot between the temperature and years from 1990 to 2016. The temperature is not labeled in actual temperature in  Celsius, instead it is measured in the difference between that year and the average temperature in 20th Century. As we can see, the change in temperature  has been fluctuating between these 26 years. The overall all trend of temperature is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of temperature almost follow the model: temperature=0.018*year-35.5. The R square adjusted is 0.73, It means the data follow the model well and every one unit increase in year will also increase 0.018 towards the intercept when predicting the temperature.
 
@@ -88,7 +92,8 @@ World_data %>% mutate(Year = as.numeric(Year)) %>% ggplot(aes(Year, CO2emission/
        caption = 'CO2 Emission has been divided by 1000')
 
 broom::tidy(CO2_Year_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the plot between the CO2 emission and years from 1990 to 2016. The unit of CO2 is labeled in 1000 MtCO₂e. As we can see, the change in CO2 emission  has been fluctuating between these 26 years, but the trend is clear. The overall all trend is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of CO2 emission almost follow the model: CO2 emission=0.546*year-1064.614. The R square adjusted is 0.96, It means the data is highly correlated with years and every one unit increase in year will also increase 0.546 towards the intercept when predicting the CO2 emission.
 
@@ -110,7 +115,8 @@ World_data %>% ggplot(aes(log(CO2emission), temperature)) + geom_point() +
        x = 'Logarithm of CO2 Emission')
 
 broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the plot between the CO2 emission and temperature from 1990 to 2016. We are interesting to find the relationship between CO2 emission and temperature. As we can see, the change in temperature is increasing when the CO2 emission is also increasing from 22500 to around 26000. Then the temperature does not change as the CO2 emission continue increase. When the CO2 emission is around 31000, the temperature increase as the CO2 emission increase again. The overall all trend is there's a positive correlation between temperature and CO2 emission, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of these two variables almost follow the model: temperature=0.893*log(CO2 emission)-8.586. The R square adjusted is 0.68, It means 68% of the data can be explain by our model and and every one unit increase in log(CO2emission) will also increase 0.893 towards the intercept when predicting the temperature.
 
@@ -135,7 +141,7 @@ transform_World_data = World_data %>% mutate(forest_area = log(forest_area), pop
 
 mult_full_model = lm(temperature ~ ., data = transform_World_data)
 broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the output of the linear model between the forest_area, population, Gas, Oil, Coal, CO2 emission, and temperature. The hypothesis of this linear model is all the parameters are not significant when predicting temperature. The p-values we get for forest area, population, Gas, oil, and CO2 emission are all above 0.05, most parameters are not significant indicates the model is not suitable to use as a prediction of temperature. In order to select the most accurate parameter in the model, we use backward step wise model selection.
 
@@ -145,9 +151,11 @@ step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
 
 final_mod = lm(temperature ~ log(Coal) + log(CO2emission), data = World_data)
 broom::tidy(final_mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 Before we use the step wise model selection, we apply log transformation on all the parameter to make the trend of each parameter more normally distributed. This is the output from the model selection:  temperature=3.095*log(CO2 emission)-1.503*log(Coal)-15.503. This relationship means every one unit increase in log(CO2emission) will increase by 3.095 towards the intercept when predicting the temperature. However, every one unit increase in log(CO2emission) will decrease by 1.503 towards the intercept when predicting the temperature. The R square is 0.8 for this model, which means 80% of the data can be explained by our model. 
+
 
 ```{r}
 temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission), 
@@ -155,6 +163,7 @@ temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission),
 cbind(World_data, temp.res) %>% ggplot(aes(temperature, temp.res)) + geom_point() +
   labs(title = 'Residuals Plot', x = 'Temperature', y = 'Residual')
 ```
+
 We want to test how well our model perform in the prediction of temperature. We draw the residual plot of the model, from this plot we can see that the residual is not normally distributed, there's no point in the lower right corner, it seems to have it's own trend. This means our model does not fit the trend of change in temperature.
 
 ```{r}
@@ -180,25 +189,24 @@ ridge_mod = ridge::linearRidge(temperature ~ .,data = transform_World_data, lamb
 cbind(tibble(term = c('(Intercept)', 'Forest Area', 'Population', 'Gas','Oil','Coal',
                      'CO2 Emission')),as.tibble(summary(ridge_mod)$summaries$summary1$coefficients)) %>%
   rename(., p.value = `Pr(>|t|)`) %>% select(term, Estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
-
-
-(Rsquare = sum((predicted - mean(y))^2)/sum((y - mean(y))^2))
-
-
+  mutate(across(where(is.numeric), ~round(., 3))) %>%
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
+
 After using the ridge regression, we choose to use the lambda=0.1, under this assumption, and all the parameter is using log transformation to reach normality. we come up with a table of the summary of the ridge regression. The output is quite different from the output that we get in the multiple linear regression. Instead of only have coal and CO2emission, we have 6 parameters here, which are "Forest area", "Population", "Gas", "Oil", "Coal", and "CO2emission". By checking the p-value of these parameter, only the p-value for "Coal" is larger than 0.05, which is not significant in this model. So our final model is Temperature=-0.13*log(Forest area)+0.317*log(Population)+0.111*log(Gas)+0.46*log(Oil)+0.14*log(CO2 Emission)-9.05. We also calculate the R square of the model is 0.709, which means around 71% of the data can be explained by our ridge model. The coefficient of "Forest area" is -0.13, which mean every one unit decrease in the log(Forest area) will increase 0.13 towards the intercept to predict the response variable. The coefficient of other variables have the same meaning as the "Forest area" one I just explained.  
 ```{r}
 predicted = as.matrix(cbind(rep(1, 27),transform_World_data[,1:6])) %*% coef(ridge_mod)
 cbind(transform_World_data, predicted) %>% ggplot() + geom_point(aes(temperature, predicted))
-
 ```
 In order to test the goodness of fit for our ridge model, we plot our predicted model with the observation data of temperature, this plot shows there is a positive linear correlation between the observation data and our predicted model. This plot confirmed our model did a good estimation on predicting the temperature, nearly all the points follow the positive relationship.
 
 ```{r}
-transform_World_data %>% cbind(predicted) %>% mutate(Index = 1990:2016) %>% 
-  ggplot() + geom_smooth(aes(Index, temperature), color = 'blue', se = FALSE) + 
-  geom_smooth(aes(Index, predicted), color = 'red', se = FALSE)+ xlab("year")
+transform_World_data %>% cbind(predicted) %>% mutate(Index = 1:27) %>% 
+  ggplot() + geom_smooth(aes(Index, temperature, color = 'True Value'), se = FALSE) + 
+  geom_smooth(aes(Index, predicted, color = 'Predicted Value'), se = FALSE) +
+  labs(title = 'Comparison between Predicted Value and True value', y = 'Temperature') +
+  scale_color_manual(name = element_blank(), labels = c('Predicted Value', 'True Value'),
+                     values = c('red', 'blue'))
 ```
 Another way to test the goodness of fit of our model is draw the model and observation data together. In this plot, the blue line is the observation data, and the red line is our predicted model. Over all our model fit the trend of the observation well, although the original data is not as linear as we predicted, our model fit the trend of the temperature well. 
 
