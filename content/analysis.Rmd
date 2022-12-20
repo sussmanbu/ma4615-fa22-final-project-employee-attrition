@@ -167,7 +167,8 @@ diag %>% ggplot(aes(y_hat, std_res)) +
        title = 'Checking for Constant Variance')
 ```
 
-
+motivation:
+We first divide all the country into developed and developing, we want to check is there any difference in CO2 emission between these two categories.
 
 ```{r}
 all_developed = c("Switzerland","Norway","Iceland","Hong Kong","Australia","Denmark","Sweden","Ireland","Germany","Netherlands","Finland","Singapore","Belgium","New Zealand","Canada","Liechtenstein","Luxembourg","United Kingdom","Japan","South Korea","United States","Israel","Malta","Slovenia","Austria","United Arab Emirates","Spain","France","Cyprus","Italy","Estonia","Czechia","Greece","Poland","Bahrain","Lithuania","Saudi Arabia","Portugal","Latvia","Andorra","Croatia","Chile","Qatar","San","Slovakia","Hungary","Argentina","Turkey","Montenegro","Kuwait","Brunei","Russia","Romania","Oman","Bahamas","Kazakhstan","Trinidad and Tobago","Costa Rica","Uruguay","Belarus","Panama","Malaysia","Georgia","Mauritius","Serbia","Thailand")
@@ -180,6 +181,9 @@ CO2_clean_1 %>% filter(!Country %in% c('World','European Union (27)')) %>% mutat
   labs(title = 'Mean Emission of CO2 Form 1990-2016', x = 'Development Phase',
        y = 'Mean Emission of CO2')
 ```
+This is the box plot that shows the mean emission of CO2 between developed and developing countries from 0 to 100 MtCO₂e.The reason that we only focus on the range smaller than 100 is that there are several country like China, United State, which has a very high CO2 emission around 4000 MtCO₂e.IF we do not set a limit, those countries will be count as outliers, and the trend of the CO2 emission is not clear at all. After we set up the range, the plot shows that the mean emission of CO2 for developed countries is higher than the developing countries. 
+
+
 
 ```{r}
 TemChange_Year %>% mutate(developed = ifelse(Area %in% all_developed, 'Developed', 'Developing')) %>%
@@ -191,11 +195,10 @@ TemChange_Year %>% mutate(developed = ifelse(Area %in% all_developed, 'Developed
   labs(title = 'Mean Temperature Change Form 1990-2016', x = 'Development Phase',
        y = 'Mean Temperature Change')
 ```
+We also plot the mean temperature change between these two categories, however, this is what we expect, in general, the CO2 emission will cause the temperature increase. In this way more CO2 emission will cause a more obvious changes in temperature. This plot confirms our conjecture， the developed countries have a more larger mean change in temperature than the developing countries. 
 
-
-Start at here
 ## Motivation:
-In order to get the relationship between year and temperature, we firstly draw the figure of temperature and CO2emission with yeas individually, then we draw the plow between temperature and CO2emission to find whether or not there is a correlation between them.
+In the previous paragraph, we simply analysis the data by dividing them into two categories, developed countries, and developing countries. The plot also confirms our conjecture, we then want to check whether this correlation is the same as before when analysis the data as a whole. Before directly apply a linear model on CO2 emission and temperature, we first want to visualize the trend of the temperature and CO2 emission separately by years. In order to get the relationship between year and temperature, we draw the figure of temperature and CO2emission with yeas individually, then we draw the plow between temperature and CO2emission to find whether or not there is a correlation between them.
 
 1.TEM & Year
 ```{r}
