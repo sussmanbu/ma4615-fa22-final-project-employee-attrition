@@ -7,7 +7,7 @@ featuredImage: images/data.jpg
 draft: false
 ---
 
-As greenhouse gas emissions blanket the Earth, they trap the sun’s heat. This leads to global warming and climate change. The world is now warming faster than at any point in recorded history. Warmer temperatures over time are changing weather patterns and disrupting the usual balance of nature. This poses many risks to human beings and all other forms of life on Earth. Our group is interested in find the relationship between the increase of global temperature and the main factors affecting it. 
+As greenhouse gas emissions blanket the Earth, they trap the sun’s heat. This leads to global warming and climate change. The world is now warming faster than at any point in recorded history. Warmer temperatures over time are changing weather patterns and disrupting the usual balance of nature. This poses many risks to human beings and all other forms of life on Earth. Our group is interested in finding the relationship between global temperature increase and the main factors affecting it. 
 
 ----
 
@@ -23,12 +23,14 @@ Forest area: https://data.worldbank.org/indicator/AG.LND.FRST.ZS
 
 Population: https://data.worldbank.org/indicator/SP.POP.TOTL
 
+One of our data is from Kaggle, the data is gathered from the Climate Watch Data portal using CAIT data source. This data was collected because CO2 emission plays a major role in climate change. Our other data mostly come from the world bank, this is an organization that collects data from different sources and shares data with people all over the world. These data were collected by this organization might because these data are highly correlated with climate change, and climate change is a topic that everyone cares about.
+
 ----
 
 
 ## Variable:
 
-* Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two datasets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available timeseries of global-scale temperature anomalies are calculated with respect to the 20th century average.
+* Temperature: Global temperature anomaly data come from the Global Historical Climatology Network-Monthly (GHCN-M) data set and International Comprehensive Ocean-Atmosphere Data Set (ICOADS), which have data from 1880 to the present. These two data sets are blended into a single product to produce the combined global land and ocean temperature anomalies. The available time series of global-scale temperature anomalies are calculated with respect to the 20th century average.
 
 * CO2 emission: Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the unit is MtCO₂e
 
@@ -53,19 +55,19 @@ we install "readxl" packages to load in the data, since two of the data are in t
 
 ### CO2 emission:
 
-In this data, the data collected Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the first column is the country name all over the world, in this data the years are present in the column from 2016 to 1990, we first use arrange to make the year in the right order from 1990 to 2016, then we find that data under is 1990 is not numerical, we as_double to make it right. Since year in most data are in each row instead of column, we use a pivot_longer to change it. We also group by country and year.
+In this data, the data collected Historical emissions of carbon dioxide for close to 3 decades for all countries across the globe, the first column is the country name all over the world, in this data the years are present in the column from 2016 to 1990, we first use arrange to make the year in the right order from 1990 to 2016, then we find that data under is 1990 is not numerical, we as_double to make it right. Since year in most data is in each row instead of a column, we use a pivot_longer to change it. We also group by country and year.
 
 ### global temperature:
 
-This data is measured in two Source, one is from the GISS Surface Temperature (GISTEMP), and the other is from the global component of Climate at a Glance (GCAG). Since the GCAG data has more decimal and is more accurate, we decided to use source from GCAG and use filter to remove other data. we only need the world data, so we use filter to only have world data for later analysis. Since the global temperature data is also measured from 1880 to 2016, we use a inner_join to join this data into the previous one.
+This data is measured in two Sources, one is from the GISS Surface Temperature (GISTEMP), and the other is from the global component of Climate at a Glance (GCAG). Since the GCAG data has more decimals and is more accurate, we decided to use a source from GCAG and use filter to remove other data. We only need the world data, so we use filter to only have world data for later analysis. Since the global temperature data is also measured from 1880 to 2016, we use an inner_join to join this data into the previous one.
 
 ### fossil fuel:
 
-The fossil fuel data has four parameters in it, year, consumption by gas, consumption by oil, and consumption by coal. These three parameters are collected together in this data since coal, oil, or gas are the major fossil fuel, and burning these fossil fuel will produce greenhouse gas together. We change the name for the last three parameter into "gas","Oil", and "Coal", which will be more clear than the original name. Also this data is collected from 1800 to 2021, the time period is much longer than our main data, we use inner_join again to combine these three fossil fuel data into a more complete data, which will be easier to use for later analysis.
+The fossil fuel data has four parameters in it, year, consumption by gas, consumption by oil, and consumption by coal. These three parameters are collected together in this data since coal, oil, or gas are the major fossil fuel, and burning these fossil fuels will produce greenhouse gas together. We change the name for the last three parameters into "gas","Oil", and "Coal", which will be more clear than the original name. Also, this data is collected from 1800 to 2021, the time period is much longer than our main data, we use inner_join again to combine these three fossil fuel data into more complete data, which will be easier to use for later analysis.
 
 ### forest area:
 
-The data is quite the same as the CO2 data, the first column is the name of all country, then comes up with the year from 2960 to 2020 in each column. We use the same method as before, first filter out the world data, then use pivot_longer to make the data easy to combine with other data.
+The data is quite the same as the CO2 data, the first column is the name of all countries, then comes up with the year from 2960 to 2020 in each column. We use the same method as before, first filtering out the world data, then using pivot_longer to make the data easy to combine with other data.
 
 ### population:
 
@@ -73,12 +75,12 @@ The source of this data is the same as the previous one, and the cleaning method
 
 ### Whold data
 
-After we clean each individual data, we use a inner_join to combine the new data into the previous one. Finally we came up with a complete data called "World_data". However in this data we find that in previous join there shows up two column which both represent the name of country. We use select and change the name of some columns to make the data clear and easy to understand.
+After we clean each individual data, we use an inner_join to combine the new data into the previous one. Finally we came up with complete data called "World_data". This data includes all the previous data from 1990 to 2016, it both include the world data, and the data for individual countries. However in this data we find that in previous join there shows up two columns which both represent the name of a country. We use select and change the name of some columns to make the data clear and easy to understand.
 
 ----
 
 
-```{r}
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
 source(
   here::here("static", "load_and_clean_data.R"), 
   echo = FALSE, # Use echo=FALSE or omit it to avoid code output  
@@ -106,11 +108,7 @@ fossil_fuel<-fossil_fuel %>% select(Year:Coal)
 fossil_fuel$Year<-as.character(fossil_fuel$Year)
 World_data<-fossil_fuel %>% inner_join(World_data)
 
-
-
 world_pop<-population %>% filter(`Country Name`=="World") %>% select(`Country Name`,"1960":"2021") %>% 
-
-
 
   pivot_longer(cols = c("1960":"2021"),names_to = "Year",values_to = "population")
 World_data<-world_pop %>% inner_join(World_data)
@@ -124,8 +122,5 @@ World_data<-World_data %>% select(- Country)
 colnames(World_data)[9]<-"temperature"
 colnames(World_data)[1]<-"Country_Name"
 colnames(World_data)[3]<-"forest_area"
-
-
 ```
-
 ----
