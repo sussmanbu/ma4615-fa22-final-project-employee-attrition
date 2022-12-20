@@ -1,8 +1,8 @@
 ---
 title: MA 415 Final Project
 draft: false
-role: Team NAME
-bio: This is my data science project. Check out the links at the top. You can update this in `content/homepage/info.md`. You can change the image above by changing `content/homepage/feature_image.md`.
+role: Team Employee-Attrition
+bio: This the data science project of Minghao Sun, Yuchen Wen, Yifei Cui, Yiling Qian and Marielle Belomme. Global warming is getting more and more serious, and thus we decided on the topic of finding relationship of temperature change and main factors affecting it. Check out the links at the top for more information regarding our project.
 organization:
   name: Boston University
   url: https://www.bu.edu/
