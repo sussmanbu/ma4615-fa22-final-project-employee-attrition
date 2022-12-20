@@ -23,6 +23,8 @@ library(GGally)
 library(patchwork) 
 library(ggpmisc)
 library(car)
+library(sf)
+library(grid)
 
 source(
   here::here("static", "load_and_clean_data.R"),
@@ -61,111 +63,16 @@ TemChange_Year = left_join(TemChange_Year, world_map, c("Area Code (M49)" = 'ISO
 
 *In order to get the relationship between year and temperature, we firstly draw the figure of years and CO2emission. It is found that with the increase of years, co2 emission also increased. Then we have the plot and find that CO2emission is also directly proportional to the weather. Therefore, we can finally get: as the years increase, the co2 emissions increase, resulting in an increase in temperature which verify our one assumption.
 
-```{r 1,warning=FALSE,message=FALSE}
-World_data %>% 
-  ggplot(aes(y=CO2emission,x=as.numeric(Year)))+geom_point()+
-  labs(y="CO2 World emission")
-(summary(lm(CO2emission~as.numeric(Year),data=World_data)))
-
-World_data %>% 
-  ggplot(aes(x=CO2emission,y=temperature))+geom_point()+
-  labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
-(summary(lm(temperature~CO2emission,data=World_data)))
-acf(World_data$CO2emission)
-pacf(World_data$CO2emission)
-
-World_data %>% 
-  ggplot(aes(x=log(CO2emission),y=temperature))+geom_point()+
-  labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
-
-World_data %>% 
-  ggplot(aes(y=temperature,x=(CO2emission-lag(temperature))/lag(CO2emission)))+geom_point()+
-  labs(x="CO2 World emission",y="Global temp anormaly")+geom_smooth()
-```
-
 ## Visualization:
 *Secondly, we get the map that shows the degree of temperature change in each region over a fixed period of time. But all we know from this map is that the magnitude of the temperature change is different for each region. We do not know what internal changes are causing the temperature to change more. Maybe it's because of changes in the terrain or just because of the geography. We have no way of knowing and this is one limitation of our anaylsis.From this data, we can also plot the average change in temperature from year to year. As we can see, the images still appear to be positively proportional, which again confirms our inferences about the relationship between year and temperature.
-
-
 
 ## Modeling:
 
 *Then, we draw a correlation matrix to see the correlation between each parameters. From the plot we find that all the parameter is highly correlated with the temperature. We let temperature always be the Y-axis, and the variables "CO2 emission", "Coal", "Gas", "population", "forest area" and "Oil" are used as the X-axis respectively. We get the conclusion that the relationship between forest area and temperature is negative. For other variables, the greater the quantity, the higher the temperature. And we find that when only test one specific parameters. All the parameter is significant when testing the linear model.However, there seems to be a problem that these parameter are highly correlated with each other, the problem of multicollinearity may appear in our model when add all the parameter in the linear model.Then we run a model with all the parameter add together. The result shows that only the parameter coal is significant. However the result indicate that add all parameter together is not a good choice. We then use the backward step wise AIC to do the model selection. The result is the parameter coal and CO2emission is significant when predicting the temperature. And our final model is temperature ~ Coal + CO2emission, the p-value of this model is small enough and the R^2 is 0.8259, which illustrate that our model can represent most of the data.
 
-
-```{r mod,warning=FALSE,message=FALSE}
-attach(World_data)
-World_data %>% select(-Country_Name, -Year) %>%
-  ggpairs(upper = list(continuous = wrap('points', alpha = .3, size = .1)),
-          lower = list(continuous = wrap('cor', size = 4)),
-          axisLabels = 'none', progress = FALSE) 
-
-World_data %>% ggplot(aes(as.numeric(Year), temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'year', y = 'temperature', title = 'The Trend of Temperature')
-temp_year_mod = lm(temperature ~ as.numeric(Year))
-summary(temp_year_mod)
-
-World_data %>% ggplot(aes(CO2emission, temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'CO2', y = 'temperature', title = 'Temperature Change with CO2 Emission')
-temp_co2_mod = lm(temperature ~ CO2emission)
-summary(temp_co2_mod)
-
-World_data %>% ggplot(aes(Coal, temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'Coal Use', y = 'temperature', title = 'Temperature Change with Coal Use')
-temp_coal_mod = lm(temperature ~ Coal)
-summary(temp_coal_mod)
-
-World_data %>% ggplot(aes(Gas, temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'Gas Use', y = 'temperature', title = 'Temperature Change with Gas Use')
-temp_gas_mod = lm(temperature ~ Gas)
-summary(temp_gas_mod)
-
-World_data %>% ggplot(aes(population, temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'Population', y = 'temperature', title = 'Temperature Change with Population')
-temp_popu_mod = lm(temperature ~ World_data$population)
-summary(temp_popu_mod)
-
-World_data %>% ggplot(aes(forest_area, temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'Forest Area', y = 'temperature', title = 'Temperature Change with Forest Area')
-temp_fore_mod = lm(temperature ~ World_data$forest_area)
-summary(temp_fore_mod)
-
-World_data %>% ggplot(aes(Oil, temperature)) + geom_smooth(se = FALSE) +
-  labs(x = 'Oil', y = 'temperature', title = 'Temperature Change with Oil Use')
-temp_oil_mod = lm(temperature ~ Oil)
-summary(temp_oil_mod)
-
-mult_lm = lm(temperature ~ World_data$population + World_data$forest_area +Gas + Oil + Coal + CO2emission)
-summary(mult_lm)
-
-step(mult_lm, direction = 'both')
-final_mod = lm(temperature ~ Coal + CO2emission)
-summary(final_mod)
-```
-
 ## Conclusion:
 
 *Finally, we validate our results through two ways. One of them checks for Normality by drawing the relationship between 'Theroretical Quantiles' and 'Sample Quantiles'. From the plot we can find that although most of the point seems follow the line, however some points in the middle part has it's own trend, which means our model is not quite good enough. Secondly, the relationship between fitted values and standardized residuals is plotted to check for Constant Variance. It is obvious that the residual is not normally distributed since in the right lower corner there is a empty space. This may happen because there might be some multicollinearity happens between the amount usage of coal and CO2emission. However this is our limit, since most of the data that we collect such as "population", "deforestation", the use of "fossil fuel" more or less has some correlation with the CO2emission, and the CO2emission is the major cause of the climate change. Our conclusion is that CO2emission contributes a lot to the climate change. 
-
-
-```{r checking,warning=FALSE,message=FALSE}
-y_hat = final_mod$fitted.values
-diagnostics = lm.influence(final_mod)
-hat = diagnostics$hat
-sigmasq_hat = sum(final_mod$residuals ^ 2) / final_mod$df.residual
-std_res = final_mod$residuals / sqrt(sigmasq_hat * (1 - hat))
-diag <- tibble(y_hat, std_res)
-
-diag %>% ggplot(aes(sample = std_res)) +
-  geom_qq() + geom_qq_line() +
-  labs(x = 'Theroretical Quantiles', y = 'Sample Quantiles',
-       title = 'Checking for Normality')
-
-diag %>% ggplot(aes(y_hat, std_res)) +
-  geom_point() + geom_hline(yintercept = c(-2, 2), color = 'blue') +
-  labs(x = 'fitted values', y = 'standardized residuals',
-       title = 'Checking for Constant Variance')
-```
 
 ```{r}
 all_developed = c("Switzerland","Norway","Iceland","Hong Kong","Australia","Denmark","Sweden","Ireland","Germany","Netherlands","Finland","Singapore","Belgium","New Zealand","Canada","Liechtenstein","Luxembourg","United Kingdom","Japan","South Korea","United States","Israel","Malta","Slovenia","Austria","United Arab Emirates","Spain","France","Cyprus","Italy","Estonia","Czechia","Greece","Poland","Bahrain","Lithuania","Saudi Arabia","Portugal","Latvia","Andorra","Croatia","Chile","Qatar","San","Slovakia","Hungary","Argentina","Turkey","Montenegro","Kuwait","Brunei","Russia","Romania","Oman","Bahamas","Kazakhstan","Trinidad and Tobago","Costa Rica","Uruguay","Belarus","Panama","Malaysia","Georgia","Mauritius","Serbia","Thailand")
@@ -205,7 +112,8 @@ World_data %>% mutate(Year = as.numeric(Year) ) %>% ggplot(aes(Year, temperature
        caption = 'Compared with the Average Temperature in 20th Century')
 
 broom::tidy(Temp_Year_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the plot between the temperature and years from 1990 to 2016. The temperature is not labeled in actual temperature in  Celsius, instead it is measured in the difference between that year and the average temperature in 20th Century. As we can see, the change in temperature  has been fluctuating between these 26 years. The overall all trend of temperature is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of temperature almost follow the model: temperature=0.018*year-35.5. The R square adjusted is 0.73, It means the data follow the model well and every one unit increase in year will also increase 0.018 towards the intercept when predicting the temperature.
 
@@ -223,7 +131,8 @@ World_data %>% mutate(Year = as.numeric(Year)) %>% ggplot(aes(Year, CO2emission/
        caption = 'CO2 Emission has been divided by 1000')
 
 broom::tidy(CO2_Year_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the plot between the CO2 emission and years from 1990 to 2016. The unit of CO2 is labeled in 1000 MtCO₂e. As we can see, the change in CO2 emission  has been fluctuating between these 26 years, but the trend is clear. The overall all trend is increasing by years, we also we draw a linear line to represent the trend between these two variable. It is clear that the trend of CO2 emission almost follow the model: CO2 emission=0.546*year-1064.614. The R square adjusted is 0.96, It means the data is highly correlated with years and every one unit increase in year will also increase 0.546 towards the intercept when predicting the CO2 emission.
 
@@ -245,7 +154,8 @@ World_data %>% ggplot(aes(log(CO2emission), temperature)) + geom_point() +
        x = 'Logarithm of CO2 Emission')
 
 broom::tidy(Temp_CO2_Mod) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 ```
 The is the plot between the CO2 emission and temperature from 1990 to 2016. We are interesting to find the relationship between CO2 emission and temperature. As we can see, the change in temperature is increasing when the CO2 emission is also increasing from 22500 to around 26000. Then the temperature does not change as the CO2 emission continue increase. When the CO2 emission is around 31000, the temperature increase as the CO2 emission increase again. The overall all trend is there's a positive correlation between temperature and CO2 emission, we also draw a linear line to represent the trend between these two variable. It is clear that the trend of these two variables almost follow the model: temperature=0.893*log(CO2 emission)-8.586. The R square adjusted is 0.68, It means 68% of the data can be explain by our model and and every one unit increase in log(CO2emission) will also increase 0.893 towards the intercept when predicting the temperature.
 
@@ -269,22 +179,31 @@ transform_World_data = World_data %>% mutate(forest_area = log(forest_area), pop
 
 mult_full_model = lm(temperature ~ ., data = transform_World_data)
 broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>%
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
+```
 
+
+```{r}
 step(lm(temperature ~ log(forest_area) + log(population) + log(Gas) + log(Oil) +
                          log(Coal) + log(CO2emission), data = World_data), direction = 'both')
 
 final_mod = lm(temperature ~ log(Coal) + log(CO2emission), data = World_data)
 broom::tidy(mult_full_model) %>% select(term, estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
-
+  mutate(across(where(is.numeric), ~round(., 3))) %>% 
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
 vif(final_mod) #不显示直接写数字可能更好 不太好做表
+```
 
+```{r}
 temp.res=resid(lm(temperature ~ log(Coal) + log(CO2emission), 
     data = World_data))
 cbind(World_data, temp.res) %>% ggplot(aes(temperature, temp.res)) + geom_point() +
   labs(title = 'Residuals Plot', x = 'Temperature', y = 'Residual')
+```
 
+
+```{r}
 predict_model<-(-5.154e-05*World_data$Coal+1.217e-04*World_data$CO2emission-1.157e+00)
 plot(density(predict_model),lwd = 5, col = "Green",main = "Density between Obsearvation and Predicted Model")
 lines(density(World_data$temperature), lwd = 2)
@@ -305,15 +224,21 @@ ridge_mod = ridge::linearRidge(temperature ~ .,data = transform_World_data, lamb
 cbind(tibble(term = c('(Intercept)', 'Forest Area', 'Population', 'Gas','Oil','Coal',
                      'CO2 Emission')),as.tibble(summary(ridge_mod)$summaries$summary1$coefficients)) %>%
   rename(., p.value = `Pr(>|t|)`) %>% select(term, Estimate, p.value) %>% 
-  mutate(across(where(is.numeric), ~round(., 3))) %>% DT::datatable()
+  mutate(across(where(is.numeric), ~round(., 3))) %>%
+  DT::datatable(rownames = FALSE, options = list(dom = 't'))
+```
 
+
+```{r}
 predicted = as.matrix(cbind(rep(1, 27),transform_World_data[,1:6])) %*% coef(ridge_mod)
-cbind(transform_World_data, predicted) %>% ggplot() + geom_point(aes(temperature, predicted))
 (Rsquare = sum((predicted - mean(y))^2)/sum((y - mean(y))^2))
 
 transform_World_data %>% cbind(predicted) %>% mutate(Index = 1:27) %>% 
-  ggplot() + geom_smooth(aes(Index, temperature), color = 'blue', se = FALSE) + 
-  geom_smooth(aes(Index, predicted), color = 'red', se = FALSE)
+  ggplot() + geom_smooth(aes(Index, temperature, color = 'True Value'), se = FALSE) + 
+  geom_smooth(aes(Index, predicted, color = 'Predicted Value'), se = FALSE) +
+  labs(title = 'Comparison between Predicted Value and True value', y = 'Temperature') +
+  scale_color_manual(name = element_blank(), labels = c('Predicted Value', 'True Value'),
+                     values = c('red', 'blue'))
 ```
 
 
