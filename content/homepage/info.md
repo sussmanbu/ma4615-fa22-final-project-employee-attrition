@@ -1,8 +1,8 @@
 ---
 title: MA 415 Final Project
 draft: false
-role: Team NAME
-bio: This is my data science project. Check out the links at the top. You can update this in `content/homepage/info.md`. You can change the image above by changing `content/homepage/feature_image.md`.
+role: Climate Change
+bio: Recycling aids in the reduction of greenhouse gas emissions by lowering energy consumption. The use of recycled materials in the manufacture of new products reduces the need for virgin materials. This reduces greenhouse gas emissions caused by the extraction or mining of virgin materials. Furthermore, manufacturing products from recycled materials uses less energy than manufacturing products from virgin materials. Waste reduction and wise shopping are even more effective at lowering greenhouse gas emissions caused by energy consumption. Less energy is required to extract, transport, and process materials to manufacture products when we buy less or reuse products. Buying products made from recycled materials, such as paper, plastic, and metal, rather than virgin materials, helps to reduce energy consumption. This is my data science project. Check out the links at the top. You can update this in `content/homepage/info.md`. You can change the image above by changing `content/homepage/feature_image.md`.
 organization:
   name: Boston University
   url: https://www.bu.edu/

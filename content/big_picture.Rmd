@@ -6,8 +6,19 @@ featuredImage: images/rrr.png
 featuredVideo:
 draft: false
 --- 
-Talk about the background of temperature change, Natural causes and human causes.
-Maybe we need to make some graph to prove natural causes is negligible
+Recycling aids in the reduction of greenhouse gas emissions by lowering energy consumption. The use of recycled materials in the manufacture of new products reduces the need for virgin materials. This reduces greenhouse gas emissions caused by the extraction or mining of virgin materials. Furthermore, manufacturing products from recycled materials uses less energy than manufacturing products from virgin materials.
+
+Waste reduction and wise shopping are even more effective at lowering greenhouse gas emissions caused by energy consumption. Less energy is required to extract, transport, and process materials to manufacture products when we buy less or reuse products. Buying products made from recycled materials, such as paper, plastic, and metal, rather than virgin materials, helps to reduce energy consumption.
+
+You've probably heard that carbon dioxide and other greenhouse gases act like a blanket or cap, trapping some of the heat that the Earth would otherwise radiate into space. That's the straightforward answer. But how do specific molecules trap heat? The answer there necessitates a dive into physics and chemistry.
+
+When sunlight strikes the Earth's surface, it absorbs some of the energy and reradiates it as infrared waves, which we perceive as heat. (Hold your hand over a dark rock on a warm sunny day to experience this phenomenon.) These infrared waves travel up into the atmosphere and, if unimpeded, will return to space.
+Infrared waves in the atmosphere are not interfered with by oxygen or nitrogen. This is because molecules are picky about the wavelength range with which they interact, according to Smerdon. For example, oxygen and nitrogen absorb energy with tightly packed wavelengths of 200 nanometers or less, whereas infrared energy travels at wider and slower wavelengths ranging from 700 to 1,000,000 nanometers. Because those ranges do not overlap, oxygen and nitrogen treat infrared waves as if they do not exist; they allow the waves (and heat) to pass freely through the atmosphere.
+
+It's not the same with CO2 and other greenhouse gases. Carbon dioxide, for example, absorbs energy at a range of wavelengths ranging from 2,000 to 15,000 nanometers, which overlaps with infrared energy. CO2 vibrates and re-emits infrared energy in all directions as it absorbs this energy. Half of that energy is lost to space, and the other half is returned to Earth as heat, contributing to the 'greenhouse effect.'
+
+Here is the mean temperature chage of each country from 1961 to 2021.
+(Interactive: https://ycwen.shinyapps.io/Temp_Change/)
 ---
 ```{r}
 source = read_csv(here::here('dataset','TempChange','TempChangeData.csv'), show_col_types = FALSE)
@@ -57,7 +68,7 @@ mean_change <- function(x, y){
 mean_change(1961,2021) + 
   tm_layout(main.title = 'Mean of Temperature change from 1961 to 2021')#could use to add other period
 ```
-Talk about mean temperature change of world(continents,countries)
+Only from the color of the map, we see most countries have their temperature changed, and the region in easteren Europe has the most siginificant increase in temperature. The change in temperature can be assumed related to countries policies and their ecomomy type. In countries like Russia, Canada, and some Arabic countries, there economy are heavily based on their fossil resources, which will highly increase their CO2 emission.
 ```{r}
 TempChange_Ave <- TemChange_Cont %>% as_tibble() %>% select('Y1961':'Y2021') %>%
   colSums(na.rm = TRUE)/223
@@ -77,9 +88,7 @@ spiral_lines(x = TempChange_Ave$year, y = 0)
 spiral_yaxis()
 grid.text('Mean Temperature Change of World (°C)', .5 , 1, )
 ```
-Talk about mean temperature change of world(after 1976 mean above 0)
-
-Talk About:Try to find Temperature change's different between developed and developing countries.
+By the graph of the temperature, the global mean temperature change continously increase and at the year 2021, the mean temperature increased over 1 degree and we can predict in near future it will get over 1.5 degree. The trend of the increase of the global mean temperature is also follow the same trend as the increase of the CO2 during this period. 
 ```{r}
 #Select 5 developed countries and 5 developing countries WHICH ARE
 #US840, UK826, JAPAN392, AUSTRALIA036, CANADA124
@@ -99,9 +108,8 @@ Selected %>% group_by(Area) %>% summarise(meanChange = mean(change, na.rm = TRUE
 
 country_level = c('Russia','Canada','China','Brazil','United Kingdom','United States','Australia','South Africa','Japan','India')
 ```
-Make some comment(maybe temperature increase in developing countries faster than developed, India and SA may have a lower latitude so the temperature change is not as significant)
+Compare to developed countries such as Canada, United States, Australia, United Kingdom and Japan, a lot  developing countries have more CO2 emission. The using of natural resources is a key for most developing countries to develop. However, India with a huge population has a comparable lower CO2 emission. As we have discussed in the temperature map, we are expected to see a higher CO2 emission in countries with high temperature increase during these years.
 
-Talk:As we know co2 have influence on tem change (so we try to find sth between them)
 ```{r}
 Fao_emission <- Fao_emission %>% select(Area, `Area Code (M49)`, Element, Item, Year, Value) %>%
   mutate(Area = str_replace_all(Area, c('China, mainland' = 'China', 'Russian Federation' = 'Russia',
@@ -114,7 +122,7 @@ Selected %>% filter(year %in% c(2000,2010,2020)) %>% mutate(Area = factor(Area, 
   labs(x = 'Country', y = 'Temperatrue Change', fill = 'Development\nphase',
        title = 'Temperature Change of Some Developed and Developing Countries')
 ```
-could see it's changing larger as time goes, make some comment
+For most countries (except Canada and Russia), the change in temperature follows a same pattern. During this 20 yeas, these 10 countries most had their temperature increased. This is the plot for CO2 emission of each country from 1990 to 2018(https://ycwen.shinyapps.io/Hist_emis/).
 ```{r}
 Selected_emis <- Fao_emission %>% group_by(Area, Year, Element) %>% summarise(emission = sum(Value))
 Selected_emis %>% filter(Element == 'Emissions (CO2)', Year %in% c(2000,2010,2020)) %>%
@@ -125,60 +133,16 @@ Selected_emis %>% filter(Element == 'Emissions (CO2)', Year %in% c(2000,2010,202
   labs(x = 'Country', y = 'CO2 Emission', fill = 'Development\nphase',
        title = 'CO2 Emission of Some Developed and Developing Countries')
 ```
-make some comment(co2 emission increase in developing countries and decrease in developed country)
-Developing countries' temperature increase more rapidly, because their co2 emission increase?or there are other factors?further analysis is needed 
+In the CO2 emission graph, during these years, CO2 emission of each country increases. Combining CO2 emission graph and temperature change graph, the higher the CO2 emission is the higher the temperature increased. The United Kingdom kept an low emission rate during this 20 years and we can see the increase in temperature is also low and even in 2010, it temperature decreased. For countries like China, the increase in CO2 emission brings the increase in temperature. And now we need to build model to prove our hypothesis in the positive relation between CO2 emission and temperatur.
 
-## Rubric: On this page
-
-Recycling aids in the reduction of greenhouse gas emissions by lowering energy consumption. The use of recycled materials in the manufacture of new products reduces the need for virgin materials. This reduces greenhouse gas emissions caused by the extraction or mining of virgin materials. Furthermore, manufacturing products from recycled materials uses less energy than manufacturing products from virgin materials.
-
-Waste reduction and wise shopping are even more effective at lowering greenhouse gas emissions caused by energy consumption. Less energy is required to extract, transport, and process materials to manufacture products when we buy less or reuse products. Buying products made from recycled materials, such as paper, plastic, and metal, rather than virgin materials, helps to reduce energy consumption.
-
-You've probably heard that carbon dioxide and other greenhouse gases act like a blanket or cap, trapping some of the heat that the Earth would otherwise radiate into space. That's the straightforward answer. But how do specific molecules trap heat? The answer there necessitates a dive into physics and chemistry.
-
-When sunlight strikes the Earth's surface, it absorbs some of the energy and reradiates it as infrared waves, which we perceive as heat. (Hold your hand over a dark rock on a warm sunny day to experience this phenomenon.) These infrared waves travel up into the atmosphere and, if unimpeded, will return to space.
-Infrared waves in the atmosphere are not interfered with by oxygen or nitrogen. This is because molecules are picky about the wavelength range with which they interact, according to Smerdon. For example, oxygen and nitrogen absorb energy with tightly packed wavelengths of 200 nanometers or less, whereas infrared energy travels at wider and slower wavelengths ranging from 700 to 1,000,000 nanometers. Because those ranges do not overlap, oxygen and nitrogen treat infrared waves as if they do not exist; they allow the waves (and heat) to pass freely through the atmosphere.
-
-It's not the same with CO2 and other greenhouse gases. Carbon dioxide, for example, absorbs energy at a range of wavelengths ranging from 2,000 to 15,000 nanometers, which overlaps with infrared energy. CO2 vibrates and re-emits infrared energy in all directions as it absorbs this energy. Half of that energy is lost to space, and the other half is returned to Earth as heat, contributing to the 'greenhouse effect.'
-
-We don't have thousands of years to wait for nature to absorb the CO2 flood. By then, billions of people would have suffered and died as a result of the effects of climate change; mass extinctions would have occurred, and our beautiful planet would be unrecognizable. Much of the damage and suffering can be avoided by decarbonizing our energy supply, removing CO2 from the atmosphere, and developing more sustainable ways of thriving. Learn how you, your community, and the environment can benefit from reducing, reusing, and recycling by saving money, energy, and natural resources. Recycling programs are managed at the state and local levels; learn more about recycling in your area.
+From our analysis, we found that CO2 emission and temperature change are highly correlated. We don't have thousands of years to wait for nature to absorb the CO2 flood. By then, billions of people would have suffered and died as a result of the effects of climate change; mass extinctions would have occurred, and our beautiful planet would be unrecognizable. Much of the damage and suffering can be avoided by decarbonizing our energy supply, removing CO2 from the atmosphere, and developing more sustainable ways of thriving. Learn how you, your community, and the environment can benefit from reducing, reusing, and recycling by saving money, energy, and natural resources. Recycling programs are managed at the state and local levels; learn more about recycling in your area.
 
 
 ---
 
-## Rubric: Other components
-
-### Interactive
-
-You will also be required to make an interactive dashboard like [this one](/flex/flex.html).
-
-Your Big Data page should include a link to an interactive dashboard. The dashboard should be created either using Shiny or FlexDashboard (or another tool with professor's approval). This interactive component should in some way support your thesis from your big picture page. Good interactives often provide both high-level understanding of the data while allowing a user to investigate specific scenarios, observations, subgroups, etc.
-
-* Quality and ease of use of the interactive components.
-Is it clear what can be explored using your interactive components?
-Does it enhance and reinforce your conclusions from the Big Picture?
-Plotly with default hover text will get no credit. Be creative!
 
 
-### Video Recording
 
-Make a video recording (probably using Zoom) demonstrating your interactive components.
-You should provide a quick explanation of your data and demonstrate some of the conclusions from your EDA.
-This video should be no longer than 4 minutes.
-Include a link to your video (and password if needed) in your README.md file on your Github repository. You are not required to provide a link on the website.
-This can be presented by any subset of the team members.
-
-
-### Rest of the Site
-
-Finally, here are important things to keep in mind for the rest of the site. 
-
-The main title of your page is informative.
-Each post has an author/description/informative title.
-All lab required posts are present.
-Each page (including the home page) has a nice featured image associated with it.
-Your about page is up to date and clean.
-You have removed the generic posts from the initial site template.
 
 
 
