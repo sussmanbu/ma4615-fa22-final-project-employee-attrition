@@ -27,7 +27,6 @@ source(
   here::here("static", "load_and_clean_data.R"),
   echo = FALSE)
 ```
-<<<<<<< HEAD
 ## Motivation:
 We first divide all the country into developed and developing, we want to check is there any difference in CO2 emission between these two categories.
 
